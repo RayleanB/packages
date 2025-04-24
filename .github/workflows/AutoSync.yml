@@ -26,9 +26,12 @@ jobs:
           ./small-packages.sh
 
       - name: Upload Logs
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: sync-logs
-          path: |
-            sync_temp/target_repo/.git/logs/*
+       if: always()  # 确保失败时也能上传日志
+       uses: actions/upload-artifact@v4  # 升级到最新稳定版
+       with:
+         name: sync-logs
+         path: |
+           sync_temp/target_repo/.git/logs/HEAD
+           sync_temp/target_repo/.git/logs/refs/**
+         retention-days: 3  # 自动清理旧日志
+         compression-level: 9  # 最高压缩率
