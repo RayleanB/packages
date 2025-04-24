@@ -8,7 +8,7 @@ FILTER_DIR="${WORKSPACE}/filtered"
 # 清理旧数据
 echo "🧹 清理工作区..."
 rm -rf "${WORKSPACE}"
-mkdir -p "${WORKSPACE}"
+mkdir -p "${WORKSPACE}" "${FILTER_DIR}"
 
 # 克隆istore
 echo "⬇️ 克隆istore仓库..."
@@ -19,10 +19,6 @@ rm -rf "${WORKSPACE}/istore/.git"
 echo "⬇️ 克隆small-package仓库..."
 git clone --depth 1 https://github.com/kenzok8/small-package.git "${WORKSPACE}/small-package"
 rm -rf "${WORKSPACE}/small-package/.git"
-
-# 创建过滤目录（关键修复）
-echo "📂 创建过滤目录..."
-mkdir -p "${FILTER_DIR}"
 
 # 筛选目录
 keep_folders=(
@@ -42,7 +38,7 @@ cd "${WORKSPACE}/small-package"
 for folder in "${keep_folders[@]}"; do
   if [ -d "${folder}" ]; then
     echo "📦 复制: ${folder}"
-    cp -rf --parents "${folder}" "${FILTER_DIR}/"
+    cp -rf "${folder}" "${FILTER_DIR}/"
   fi
 done
 cd -
