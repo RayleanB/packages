@@ -22,10 +22,19 @@ jobs:
 
     - name: Clean and commit
       run: |
-        # 移动文件（绝对路径操作）
-        shopt -s dotglob
-        [ -d "_temp_sync" ] && mv -f _temp_sync/* . 2>/dev/null || true
-        
+        # 删除旧文件（保留关键文件）
+        find . -mindepth 1 -maxdepth 1 \
+          -not -name '.git' \
+          -not -name '.github' \
+          -not -name 'diy.sh' \
+          -exec rm -rf {} +
+
+        # 移动新内容（精确控制文件）
+        if [ -d "_temp_sync" ]; then
+          shopt -s dotglob
+          mv -f _temp_sync/* . 2>/dev/null || true
+        fi
+
         # 提交变更
         git config --global user.name "iStore AutoSync"
         git config --global user.email "autosync@users.noreply.github.com"
@@ -35,4 +44,5 @@ jobs:
 
     - name: Final cleanup
       run: |
-        rm -rf _temp_sync
+        # 强制清理临时目录
+        rm -rf _temp_sync || true
