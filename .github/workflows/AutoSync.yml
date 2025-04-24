@@ -1,61 +1,38 @@
-name: AutoSync iStore
+name: Auto Sync Packages
 
 on:
   schedule:
-    - cron: '0 20 * * *'  # UTC时间20点(北京时间次日4点)
-  workflow_dispatch:
+    - cron: '0 3 * * *'  # 每天UTC时间3点运行（北京时间11点）
+  workflow_dispatch:     # 手动触发选项
     inputs:
-      force:
-        description: '强制同步'
+      folders:
+        description: '要同步的文件夹（空格分隔）'
         required: false
-        default: 'false'
-  push:
-    paths:
-      - '.github/workflows/sync.yml'
-      - 'diy.sh'
+        default: 'luci-app-argon-config luci-theme-argon'
 
 jobs:
-  sync:
+  sync-packages:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target: [main]
-      fail-fast: false
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup environment
-      run: |
-        git config --global user.name "iStore AutoSync"
-        git config --global user.email "autosync@users.noreply.github.com"
-        sudo timedatectl set-timezone "Asia/Shanghai"
+      - name: Setup Environment
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
-    - name: Execute sync script
-      run: |
-        chmod +x diy.sh
-        ./diy.sh
+      - name: Run Clone Script
+        env:
+          CLONE_FOLDERS: ${{ github.event.inputs.folders }}
+        run: |
+          # 动态修改克隆文件夹
+          sed -i "s/^CLONE_FOLDERS=.*/CLONE_FOLDERS=\"$CLONE_FOLDERS\"/" clone.sh
+          chmod +x clone.sh
+          ./clone.sh
 
-    - name: Commit changes
-      env:
-        COMMIT_MSG: "AutoSync: $(date +'%Y-%m-%d %H:%M:%S')"
-      run: |
-        if git status --porcelain | grep .; then
-          git add .
-          git commit -m "$COMMIT_MSG"
-          git push origin main
-        else
-          echo "No changes to commit"
-        fi
-
-    - name: Clean workflow runs
-      uses: Mattraks/delete-workflow-runs@main
-      with:
-        token: ${{ github.token }}
-        repository: ${{ github.repository }}
-        retain_days: 3
-        keep_minimum_runs: 5
+      - name: Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
