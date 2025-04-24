@@ -1,8 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
-# 工作区定义
-WORKSPACE="_temp_sync"
+# 工作区定义（使用绝对路径）
+WORKSPACE="${GITHUB_WORKSPACE}/_temp_sync"
 FILTER_DIR="${WORKSPACE}/filtered"
 
 # 清理旧数据
@@ -38,15 +38,17 @@ cd "${WORKSPACE}/small-package"
 for folder in "${keep_folders[@]}"; do
   if [ -d "${folder}" ]; then
     echo "📦 复制: ${folder}"
+    # 强制创建目标目录
+    mkdir -p "${FILTER_DIR}"
     cp -rf "${folder}" "${FILTER_DIR}/"
   fi
 done
 cd -
 
-# 合并内容
+# 合并内容（使用rsync确保目录存在）
 echo "🔄 合并仓库内容..."
-mv -f "${WORKSPACE}/istore"/* "${WORKSPACE}/"
-mv -f "${FILTER_DIR}"/* "${WORKSPACE}/"
+rsync -a --remove-source-files "${WORKSPACE}/istore/" "${WORKSPACE}/"
+rsync -a --remove-source-files "${FILTER_DIR}/" "${WORKSPACE}/"
 
 # 清理中间目录
 echo "🧽 清理临时文件..."
