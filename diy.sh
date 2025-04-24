@@ -1,27 +1,30 @@
 #!/bin/bash
 set -eo pipefail
 
+# 工作区定义
 WORKSPACE="_temp_sync"
 FILTER_DIR="${WORKSPACE}/filtered"
 
 # 清理旧数据
+echo "🧹 清理工作区..."
 rm -rf "${WORKSPACE}"
 mkdir -p "${WORKSPACE}"
 
-# 克隆并处理istore
-echo "→ Cloning istore..."
+# 克隆istore
+echo "⬇️ 克隆istore仓库..."
 git clone --depth 1 https://github.com/linkease/istore.git "${WORKSPACE}/istore"
 rm -rf "${WORKSPACE}/istore/.git"
 
-# 克隆并处理small-package
-echo "→ Cloning small-package..."
+# 克隆small-package
+echo "⬇️ 克隆small-package仓库..."
 git clone --depth 1 https://github.com/kenzok8/small-package.git "${WORKSPACE}/small-package"
 rm -rf "${WORKSPACE}/small-package/.git"
 
-# 创建过滤目录（强制创建父级目录）
+# 创建过滤目录（关键修复）
+echo "📂 创建过滤目录..."
 mkdir -p "${FILTER_DIR}"
 
-# 筛选目录列表
+# 筛选目录
 keep_folders=(
   istoreenhance
   luci-app-istoredup
@@ -34,25 +37,27 @@ keep_folders=(
   vmease
 )
 
-echo "→ Filtering small-package..."
+echo "🔍 过滤small-package内容..."
 cd "${WORKSPACE}/small-package"
 for folder in "${keep_folders[@]}"; do
   if [ -d "${folder}" ]; then
-    echo "Copying ${folder}..."
-    cp -rf "${folder}" "${FILTER_DIR}/" || true
+    echo "📦 复制: ${folder}"
+    cp -rf --parents "${folder}" "${FILTER_DIR}/"
   fi
 done
-cd ..
+cd -
 
-# 合并内容（使用rsync更可靠）
-echo "→ Merging contents..."
-rsync -a istore/ "${WORKSPACE}/"
-rsync -a filtered/ "${WORKSPACE}/"
+# 合并内容
+echo "🔄 合并仓库内容..."
+mv -f "${WORKSPACE}/istore"/* "${WORKSPACE}/"
+mv -f "${FILTER_DIR}"/* "${WORKSPACE}/"
 
 # 清理中间目录
-rm -rf istore small-package filtered
+echo "🧽 清理临时文件..."
+rm -rf "${WORKSPACE}/"{istore,small-package,filtered}
 
-# 确保空目录
+# 保留空目录
+echo "📁 保留目录结构..."
 find "${WORKSPACE}" -type d -empty -exec touch {}/.keep \;
 
-echo "✅ Sync completed"
+echo "✅ 同步完成！"
