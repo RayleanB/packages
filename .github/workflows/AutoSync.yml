@@ -22,17 +22,10 @@ jobs:
 
     - name: Clean and commit
       run: |
-        # 保留必要文件
-        find . -mindepth 1 -maxdepth 1 \
-          -not -name '.git' \
-          -not -name '.github' \
-          -not -name 'diy.sh' \
-          -exec rm -rf {} +
-
-        # 移动文件（包含隐藏文件）
+        # 移动文件（绝对路径操作）
         shopt -s dotglob
-        mv -f _temp_sync/* . 2>/dev/null || true
-
+        [ -d "_temp_sync" ] && mv -f _temp_sync/* . 2>/dev/null || true
+        
         # 提交变更
         git config --global user.name "iStore AutoSync"
         git config --global user.email "autosync@users.noreply.github.com"
