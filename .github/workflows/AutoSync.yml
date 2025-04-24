@@ -20,17 +20,23 @@ jobs:
         chmod +x diy.sh
         ./diy.sh
 
-    - name: Clean and commit
+    - name: Update repository
       run: |
-        # 删除旧文件（保留关键文件）
-        find . -mindepth 1 -maxdepth 1 \
-          -not -name '.git' \
-          -not -name '.github' \
-          -not -name 'diy.sh' \
-          -exec rm -rf {} +
-
-        # 移动新内容（精确控制文件）
+        # 仅删除需要覆盖的旧文件
         if [ -d "_temp_sync" ]; then
+          # 创建保留列表
+          keep_files=(
+            .git
+            .github
+            diy.sh
+          )
+          
+          # 删除非保留文件
+          find . -mindepth 1 -maxdepth 1 \
+            $(printf -- '-not -name "%s" ' "${keep_files[@]}") \
+            -exec rm -rf {} +
+          
+          # 移动新内容（保留.git等目录）
           shopt -s dotglob
           mv -f _temp_sync/* . 2>/dev/null || true
         fi
@@ -44,5 +50,4 @@ jobs:
 
     - name: Final cleanup
       run: |
-        # 强制清理临时目录
-        rm -rf _temp_sync || true
+        rm -rf _temp_sync
