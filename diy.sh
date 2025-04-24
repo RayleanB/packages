@@ -1,26 +1,21 @@
 #!/bin/bash
 set -eo pipefail
 
-# 工作区定义（使用临时目录）
-TEMP_DIR="$(mktemp -d)"
-WORKSPACE="${TEMP_DIR}/_temp_sync"
-FILTER_DIR="${WORKSPACE}/filtered"
+# 临时工作区定义
+WORKSPACE="_temp_sync"
+mkdir -p "$WORKSPACE"
 
-# 清理旧数据
-echo "🧹 初始化工作区..."
-rm -rf "${WORKSPACE}"
-mkdir -p "${WORKSPACE}" "${FILTER_DIR}"
-
-# 克隆源仓库
+# 克隆istore
 echo "⬇️ 克隆istore仓库..."
 git clone --depth 1 https://github.com/linkease/istore.git "${WORKSPACE}/istore"
 rm -rf "${WORKSPACE}/istore/.git"
 
+# 克隆并处理small-package
 echo "⬇️ 克隆small-package仓库..."
 git clone --depth 1 https://github.com/kenzok8/small-package.git "${WORKSPACE}/small-package"
 rm -rf "${WORKSPACE}/small-package/.git"
 
-# 过滤small-package
+# 筛选small-package目录
 keep_folders=(
   istoreenhance
   luci-app-istoredup
@@ -33,33 +28,28 @@ keep_folders=(
   vmease
 )
 
-echo "🔍 过滤内容..."
+echo "🔍 过滤small-package内容..."
 cd "${WORKSPACE}/small-package"
+mkdir -p "../filtered"
 for folder in "${keep_folders[@]}"; do
-  if [ -d "${folder}" ]; then
-    echo "📦 复制: ${folder}"
-    mkdir -p "${FILTER_DIR}"
-    cp -rf "${folder}" "${FILTER_DIR}/"
+  if [ -d "$folder" ]; then
+    echo "📦 保留: $folder"
+    cp -rf "$folder" "../filtered/"
   fi
 done
-cd -
+cd ..
 
-# 合并内容
-echo "🔄 合并文件..."
-mv -f "${WORKSPACE}/istore"/* "${WORKSPACE}/" 2>/dev/null || true
-mv -f "${FILTER_DIR}"/* "${WORKSPACE}/" 2>/dev/null || true
+# 合并内容到根目录
+echo "🔄 合并仓库内容..."
+mv -f istore/* . 2>/dev/null || true
+mv -f filtered/* . 2>/dev/null || true
 
-# 最终处理
-echo "📁 准备发布内容..."
-mkdir -p "${TEMP_DIR}/final_output"
-mv -f "${WORKSPACE}"/* "${TEMP_DIR}/final_output/"
+# 清理中间文件
+echo "🧹 清理临时文件..."
+rm -rf istore small-package filtered
 
-# 移动到工作区可见目录
-echo "🚚 转移文件..."
-mv -f "${TEMP_DIR}/final_output" "${GITHUB_WORKSPACE}/_temp_sync"
-
-# 清理所有临时文件
-echo "🧽 清理临时目录..."
-rm -rf "${TEMP_DIR}"
+# 保留空目录结构
+echo "📁 维护目录结构..."
+find . -type d -empty -exec touch {}/.keep \;
 
 echo "✅ 同步完成！"
