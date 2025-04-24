@@ -3,7 +3,7 @@
 # 用户自定义配置区（修改以下变量）
 SOURCE_REPO="https://github.com/kenzok8/small-package.git"  # 源仓库地址
 TARGET_DIR="my-packages"                                    # 目标目录名称
-CLONE_FOLDERS="luci-app-argon-config luci-theme-argon"       # 要克隆的文件夹列表（空格分隔）
+CLONE_FOLDERS="luci-app-argon-config"
 
 # 稀疏克隆函数
 function git_sparse_clone() {
