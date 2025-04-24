@@ -1,19 +1,23 @@
 #!/bin/bash
 set -e
 
-# 初始化目录
-rm -rf _temp_sync
-mkdir -p _temp_sync
+# 初始化临时目录
+WORKSPACE="_temp_sync"
+rm -rf $WORKSPACE
+mkdir -p $WORKSPACE
 
-# 克隆并处理istore
-git clone --depth 1 https://github.com/linkease/istore.git _temp_sync/istore
-rm -rf _temp_sync/istore/.git
+# 克隆istore仓库
+git clone --depth 1 https://github.com/linkease/istore.git $WORKSPACE/istore
+rm -rf $WORKSPACE/istore/.git
 
-# 克隆并处理small-package
-git clone --depth 1 https://github.com/kenzok8/small-package.git _temp_sync/small-package
-cd _temp_sync/small-package
+# 克隆small-package仓库
+git clone --depth 1 https://github.com/kenzok8/small-package.git $WORKSPACE/small-package
+rm -rf $WORKSPACE/small-package/.git
 
-# 需要保留的目录列表
+# 筛选small-package目录
+FILTER_DIR="$WORKSPACE/filtered"
+mkdir -p $FILTER_DIR
+
 keep_folders=(
   istoreenhance
   luci-app-istoredup
@@ -26,19 +30,23 @@ keep_folders=(
   vmease
 )
 
-# 筛选目录
-mkdir -p ../filtered
+cd $WORKSPACE/small-package
 for folder in "${keep_folders[@]}"; do
   if [ -d "$folder" ]; then
-    cp -rf "$folder" ../filtered/
+    cp -rf "$folder" $FILTER_DIR/
   fi
 done
+cd ..
 
 # 合并内容到根目录
-cd ../..
-mv -f _temp_sync/istore/* _temp_sync/
-mv -f _temp_sync/filtered/* _temp_sync/
-rm -rf _temp_sync/{istore,small-package,filtered}
+mv istore/* .
+mv filtered/* .
 
-# 确保空目录保留
-find _temp_sync -type d -empty -exec touch {}/.keep \;
+# 清理中间目录
+rm -rf istore small-package filtered
+
+# 保留空目录
+find . -type d -empty -exec touch {}/.keep \;
+
+# 返回项目根目录
+cd ..
