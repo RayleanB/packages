@@ -1,0 +1,43 @@
+name: AutoSync iStore
+
+on:
+  schedule:
+    - cron: '0 20 * * *'  # UTC时间20点(北京时间次日4点)
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout target repo
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Execute sync script
+      run: |
+        chmod +x diy.sh
+        ./diy.sh
+
+    - name: Clean and commit
+      run: |
+        # 删除历史文件（保留.git和diy.sh）
+        find . -mindepth 1 -maxdepth 1 \
+          -not -name '.git' \
+          -not -name 'diy.sh' \
+          -exec rm -rf {} +
+
+        # 移动新内容到根目录
+        mv -f _temp_sync/* . 2>/dev/null || true
+
+        # 提交变更
+        git config --global user.name "iStore AutoSync"
+        git config --global user.email "autosync@users.noreply.github.com"
+        git add .
+        git commit -m "AutoSync: $(date +'%Y%m%d-%H%M%S')" || echo "No changes"
+        git push origin main
+
+    - name: Final cleanup
+      run: |
+        rm -rf _temp_sync
