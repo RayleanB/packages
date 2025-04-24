@@ -2,61 +2,70 @@
 set -euo pipefail
 
 # ===================== 用户配置区 =====================
-SOURCE_REPO="https://github.com/kenzok8/small-package.git"  # 源仓库地址
-TARGET_USER="lein134"                          # 目标账户用户名
-TARGET_REPO_NAME="packages"                         # 目标仓库名称
-TARGET_TOKEN="${TARGET_PAT}"
+SOURCE_REPO="https://github.com/kenzok8/small-package.git"
+TARGET_USER="lein134"  
+TARGET_REPO_NAME="packages"
+MAX_RETRY=3  # 最大重试次数
 
-# 要克隆的文件夹数组（每行一个，支持#注释）
-CLONE_FOLDERS=(
-    "luci-app-argon-config"     # 主题配置插件
-
-)
-
-# ===================== 稀疏克隆函数 =====================
-git_sparse_clone() {
-    local branch="$1" rurl="$2" localdir="$3" && shift 3
-    local folders=("$@")
-
-    echo "🗃️  开始稀疏克隆，分支: $branch | 文件夹: ${folders[*]}"
-    
-    git clone -b $branch --depth 1 --filter=blob:none --sparse $rurl $localdir
-    cd $localdir
-    git sparse-checkout init --cone
-    git sparse-checkout set "${folders[@]}"
-    mv -n "${folders[@]}" ../
-    cd ..
-    rm -rf $localdir
+# ===================== 增强版同步函数 =====================
+robust_rsync() {
+    local retry=0
+    until [ $retry -ge $MAX_RETRY ]
+    do
+        # 添加rsync容错参数
+        rsync -av --ignore-missing-args --delay-updates --delete \
+              --exclude='.git' --filter=':- .gitignore' \
+              ./ target_repo/ && return 0
+        
+        echo "⚠️ 第 $((retry+1)) 次同步失败，60秒后重试..."
+        sleep 60
+        ((retry++))
+    done
+    echo "❌ 达到最大重试次数 $MAX_RETRY"
+    return 1
 }
 
-# ===================== 主执行流程 =====================
+# ===================== 主逻辑 =====================
 main() {
-    # 初始化目标仓库
-    TARGET_REPO="https://${TARGET_TOKEN}@github.com/${TARGET_USER}/${TARGET_REPO_NAME}.git"
+    # 初始化变量
+    TARGET_REPO="https://${TARGET_PAT}@github.com/${TARGET_USER}/${TARGET_REPO_NAME}.git"
     WORK_DIR="sync_temp"
     
-    # 清理并创建目录
+    # 清理工作区
     rm -rf $WORK_DIR && mkdir -p $WORK_DIR
     cd $WORK_DIR
-    
-    # 执行稀疏克隆
+
+    # 克隆源仓库
     git_sparse_clone main "$SOURCE_REPO" "source_repo" "${CLONE_FOLDERS[@]}"
     
-    # 初始化目标仓库
-    git clone --depth 1 $TARGET_REPO target_repo
-    rsync -av --delete ./ target_repo/
+    # 克隆目标仓库
+    git clone --quiet --depth 1 $TARGET_REPO target_repo
     
+    # 增强同步
+    if ! robust_rsync; then
+        echo "::warning::部分文件同步失败，但继续提交"
+    fi
+
     # 提交变更
     cd target_repo
-    git config user.name "GitHub Actions"
-    git config user.email "actions@github.com"
-    git add .
-    git commit -m "Sync: $(date +'%Y-%m-%d %H:%M:%S')" || echo "🟢 无变更可提交"
-    git push origin main
+    git config --local core.autocrlf false
+    git add --all --verbose
+    
+    # 智能提交
+    if ! git commit -m "Sync: $(date +'%Y-%m-%d %H:%M:%S')"; then
+        echo "🟢 无变更需要提交"
+        exit 0  # 正常退出
+    fi
+    
+    # 重试推送
+    git push --verbose origin main || {
+        echo "🔴 推送失败，尝试强制推送"
+        git push --force origin main
+    }
 }
 
-# 异常处理
-trap "echo '❌ 脚本执行失败！退出码: $?'" EXIT
-main
+# ===================== 执行入口 =====================
+trap "echo '❌ 脚本被中断！'; exit 130" INT TERM
+main || exit $?
 trap - EXIT
-echo "✅ 同步完成！"
+echo "✅ 同步成功完成"
