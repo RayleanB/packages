@@ -1,30 +1,62 @@
 #!/bin/bash
+set -euo pipefail
 
-# 用户自定义配置区（修改以下变量）
+# ===================== 用户配置区 =====================
 SOURCE_REPO="https://github.com/kenzok8/small-package.git"  # 源仓库地址
-TARGET_DIR="my-packages"                                    # 目标目录名称
-CLONE_FOLDERS=""
+TARGET_USER="lein134"                          # 目标账户用户名
+TARGET_REPO_NAME="packages"                         # 目标仓库名称
+TARGET_TOKEN="${{ secrets.TARGET_PAT }}"                    # 从Secrets读取PAT
 
-# 稀疏克隆函数
-function git_sparse_clone() {
-  branch="$1" rurl="$2" localdir="$3" && shift 3
-  git clone -b $branch --depth 1 --filter=blob:none --sparse $rurl $localdir
-  cd $localdir
-  git sparse-checkout init --cone
-  git sparse-checkout set $@
-  mv -n $@ ../
-  cd ..
-  rm -rf $localdir
+# 要克隆的文件夹数组（每行一个，支持#注释）
+CLONE_FOLDERS=(
+    "luci-app-argon-config"     # 主题配置插件
+
+)
+
+# ===================== 稀疏克隆函数 =====================
+git_sparse_clone() {
+    local branch="$1" rurl="$2" localdir="$3" && shift 3
+    local folders=("$@")
+
+    echo "🗃️  开始稀疏克隆，分支: $branch | 文件夹: ${folders[*]}"
+    
+    git clone -b $branch --depth 1 --filter=blob:none --sparse $rurl $localdir
+    cd $localdir
+    git sparse-checkout init --cone
+    git sparse-checkout set "${folders[@]}"
+    mv -n "${folders[@]}" ../
+    cd ..
+    rm -rf $localdir
 }
 
-# 主克隆流程
-rm -rf $TARGET_DIR && mkdir $TARGET_DIR
-git_sparse_clone main "$SOURCE_REPO" "$TARGET_DIR" $CLONE_FOLDERS
+# ===================== 主执行流程 =====================
+main() {
+    # 初始化目标仓库
+    TARGET_REPO="https://${TARGET_TOKEN}@github.com/${TARGET_USER}/${TARGET_REPO_NAME}.git"
+    WORK_DIR="sync_temp"
+    
+    # 清理并创建目录
+    rm -rf $WORK_DIR && mkdir -p $WORK_DIR
+    cd $WORK_DIR
+    
+    # 执行稀疏克隆
+    git_sparse_clone main "$SOURCE_REPO" "source_repo" "${CLONE_FOLDERS[@]}"
+    
+    # 初始化目标仓库
+    git clone --depth 1 $TARGET_REPO target_repo
+    rsync -av --delete ./ target_repo/
+    
+    # 提交变更
+    cd target_repo
+    git config user.name "GitHub Actions"
+    git config user.email "actions@github.com"
+    git add .
+    git commit -m "Sync: $(date +'%Y-%m-%d %H:%M:%S')" || echo "🟢 无变更可提交"
+    git push origin main
+}
 
-# 清理.git文件
-find $TARGET_DIR -name ".git*" -exec rm -rf {} \;
-
-# 自动提交
-git add .
-git commit -m "Sync: $(date +'%Y-%m-%d %H:%M:%S')"
-git push
+# 异常处理
+trap "echo '❌ 脚本执行失败！退出码: $?'" EXIT
+main
+trap - EXIT
+echo "✅ 同步完成！"
