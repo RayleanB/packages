@@ -1,4 +1,0 @@
-
-config nps
-	option enable '0'
-
