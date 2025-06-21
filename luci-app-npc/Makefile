@@ -4,11 +4,17 @@
 
 include $(TOPDIR)/rules.mk
 
+PKG_NAME:=luci-app-npc
+PKG_VERSION:=1.7
+PKG_RELEASE:=7
+
 LUCI_TITLE:=LuCI support for NPC
 LUCI_DEPENDS:=+npc
 LUCI_PKGARCH:=all
-PKG_VERSION:=1.7
-PKG_RELEASE:=5
+
+define Package/$(PKG_NAME)/conffiles
+/etc/config/npc
+endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
