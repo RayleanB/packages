@@ -1,4 +1,4 @@
-m = Map("npc", translate("NPS Client"), translate("Nps is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."))
+m = Map("npc", translate("NPS Client"), translate("NPS is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."))
 m.apply_on_parse = true
 function m.on_after_commit(self)
 	local enabled = luci.model.uci.cursor():get("npc", "@npc[0]", "enable")
@@ -11,7 +11,7 @@ end
 
 m:section(SimpleSection).template = "npc/npc_status"
 
-s = m:section(TypedSection,"npc")
+s = m:section(TypedSection, "npc")
 s.addremove = false
 s.anonymous = true
 
@@ -32,18 +32,29 @@ protocol.default = "tcp"
 dns = s:option(Value, "dns", translate("DNS Server"), translate("e.g. 8.8.8.8"))
 dns.default = ""
 
+extra_args = s:option(Value, "extra_args", translate("Extra Arguments"), translate("Additional NPC arguments, e.g. '-xxx=yyy -aaa=bbb'"))
+extra_args.rmempty = true
+extra_args.default = ""
+
 update_button = s:option(Button, "update_button", translate("Update NPC"), translate("Click to update to the latest version"))
 update_button.modal = false
 function update_button.write(self, section, value)
-    luci.http.redirect(luci.dispatcher.build_url("admin", "services", "npc"))
-    luci.sys.call("( /usr/bin/npc update && /etc/init.d/npc restart ) >/tmp/npc_update.log 2>&1 &")
+	luci.http.redirect(luci.dispatcher.build_url("admin", "services", "npc"))
+	luci.sys.call("( /usr/bin/npc update && /etc/init.d/npc restart ) >/tmp/npc_update.log 2>&1 &")
+end
+
+install_button = s:option(Button, "install_button", translate("Install NPC"), translate("Click to install or update NPC via script"))
+install_button.modal = false
+function install_button.write(self, section, value)
+	luci.http.redirect(luci.dispatcher.build_url("admin", "services", "npc"))
+	luci.sys.call("( wget -qO- https://fastly.jsdelivr.net/gh/djylb/nps@master/install.sh | sh -s npc && /etc/init.d/npc restart ) >/tmp/npc_install.log 2>&1 &")
 end
 
 github_button = s:option(Button, "github_button", "Github", "https://github.com/djylb/nps-openwrt")
 github_button.modal = false
 function github_button.write(self, section, value)
-    luci.http.status(200)
-    luci.http.redirect("https://github.com/djylb/nps-openwrt")
+	luci.http.status(200)
+	luci.http.redirect("https://github.com/djylb/nps-openwrt")
 end
 
 return m
