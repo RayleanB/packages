@@ -8,16 +8,18 @@
     --text-primary: #374151;
     --text-secondary: #64748b;
     --text-title: #4d4d4d;
+    --select-hover: #ebebeb;
     --border-color: #b1b1b1;
     --border-light: #e2e8f0;
     --hover-bg: #f8fafc;
     --primary-color: #3b82f6;
     --success-color: #059669;
     --success-dark: #047857;
-    --warning-color: #f59e0b;
+    --tip-color: #f59e0b;
     --error-color: #dc2626;
-    --warning-log: #ff00bb;
-    --watch-log: #b300ff;
+    --warning-color: #ff00bb;
+    --watchdog-color: #b300ff;
+    --info-color: #3b82f6;
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --radius-sm: 6px;
@@ -25,15 +27,15 @@
     --radius-lg: 8px;
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
-    
+
     --control-height: 32px;
     --card-padding: 6px 8px;
     --gap-size: 10px;
-    
+
     --row-1-height: 160px;
     --row-2-height: 140px;
     --row-3-height: 140px;
-    --row-4-height: 250px;
+    --row-4-height: 280px;
 }
 
 .oc[data-darkmode="true"] {
@@ -43,6 +45,7 @@
     --text-primary: #ebebeb;
     --text-secondary: #d0cfcf;
     --text-title: #e5e7eb;
+    --select-hover: #ebebeb;
     --border-color: #939393;
     --border-light: #6b7280;
     --hover-bg: #374151;
@@ -50,9 +53,10 @@
     --success-color: #34d399;
     --success-dark: #10b981;
     --error-color: #ff7070;
-    --warning-color: #f9bb51;
-    --warning-log: #fa41c8;
-    --watch-log: #c147f5;
+    --tip-color: #f9bb51;
+    --warning-color: #fa41c8;
+    --watchdog-color: #c147f5;
+    --info-color: #3b82f6;
 }
 
 .oc[data-darkmode="true"] .plugin-toggle-slider {
@@ -94,7 +98,7 @@
 }
 
 .oc[data-darkmode="true"] .subscription-progress-fill.medium {
-    background: var(--warning-color);
+    background: var(--tip-color);
 }
 
 .oc[data-darkmode="true"] .subscription-progress-fill.low {
@@ -290,6 +294,13 @@
     gap: 5px;
     max-width: 100%;
     box-sizing: border-box;
+}
+
+.oc .sub-card:hover {
+    background: var(--hover-bg, #f3f4f6);
+    border-color: var(--primary-color, #3b82f6);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 .oc .sub-card.stat-item {
@@ -542,7 +553,8 @@
     width: 100%;
     height: var(--control-height);
     padding: 5px 12px;
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--border-light) !important;
+    background-color: var(--bg-white) !important;
     border-radius: var(--radius-sm);
     background: var(--bg-white);
     color: var(--text-primary);
@@ -713,7 +725,7 @@
 }
 
 .oc .dashboard-btn {
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 500 !important;
     color: white !important;
     cursor: pointer !important;
@@ -877,6 +889,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 180px;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition-fast);
     position: relative;
@@ -907,7 +920,7 @@
 .oc .subscription-info-details {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
     flex: 1;
     min-height: 80px;
     padding-left: 20px;
@@ -918,12 +931,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin: auto 0;
 }
 
 .oc .subscription-progress-bar {
     background: var(--bg-gray);
     border-radius: 4px;
-    height: 10px;
+    height: 12px;
     position: relative;
     overflow: hidden;
 }
@@ -939,21 +953,190 @@
 }
 
 .oc .subscription-progress-fill.medium {
-    background: var(--warning-color);
+    background: var(--tip-color);
 }
 
 .oc .subscription-progress-fill.low {
     background: var(--error-color);
 }
 
-.oc .subscription-info-text {
-    font-size: 13px;
+.oc .subscription-info-title {
+    font-size: 15px;
+    font-weight: 600;
     color: var(--text-secondary);
     line-height: 1.4;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     display: block;
+}
+
+.oc .subscription-actions-row {
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.oc .subscription-overwrite-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+    margin-right: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+
+.oc .subscription-overwrite-tags::-webkit-scrollbar {
+    display: none;
+}
+
+.oc .subscription-overwrite-tags.drag-scroll-enabled {
+    cursor: grab;
+    user-select: none;
+}
+
+.oc .subscription-overwrite-tags.dragging {
+    cursor: grabbing;
+}
+
+.oc .subscription-overwrite-tag {
+    height: 28px;
+    width: fit-content;
+    padding: 0 8px;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    background: var(--bg-white);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    word-break: keep-all;
+    line-height: 1;
+    box-sizing: border-box;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+}
+
+.oc .subscription-overwrite-tag.type-http {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.oc .subscription-overwrite-tag.type-file {
+    color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.oc .subscription-overwrite-tag.type-unknown {
+    color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+.oc .subscription-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.oc .subscription-info-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    display: block;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    cursor: default;
+    user-select: text;
+    -webkit-overflow-scrolling: touch;
+}
+
+.oc .subscription-info-text::-webkit-scrollbar {
+    display: none;
+}
+
+.oc .subscription-info-text.is-draggable {
+    cursor: grab;
+    user-select: none;
+}
+
+.oc .subscription-info-text.dragging {
+    cursor: grabbing;
+}
+
+/* Multiple Providers Grid Layout */
+.oc .subscription-providers-grid {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    max-width: 100%;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    cursor: grab;
+    user-select: none;
+}
+
+.oc .subscription-providers-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.oc .subscription-providers-grid.dragging {
+    cursor: grabbing;
+}
+
+.oc .subscription-providers-grid[data-count="1"] {
+    overflow-x: hidden;
+}
+
+.oc .subscription-providers-grid[data-count="2"],
+.oc .subscription-providers-grid[data-count="3"] {
+    overflow-x: hidden;
+}
+
+.oc .provider-card {
+    background: transparent;
+    padding: 0;
+    transition: all 0.2s ease;
+    min-width: calc(33.333% - 8px);
+    flex: 0 0 calc(33.333% - 8px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* For 1-2 providers, allow them to fill available space */
+.oc .subscription-providers-grid[data-count="1"] .provider-card {
+    min-width: 100%;
+    flex: 1 1 100%;
+}
+
+.oc .subscription-providers-grid[data-count="2"] .provider-card {
+    min-width: calc(50% - 6px);
+    flex: 1 1 calc(50% - 6px);
+}
+
+/* For 3+ providers, fixed 33.333% width */
+/* data-count="3" uses the base rule: flex: 0 0 calc(33.333% - 8px) */
+
+/* Dark mode support for provider cards */
+.oc[data-darkmode="true"] .provider-card {
+    background: transparent;
 }
 
 .oc .subscription-loading,
@@ -1200,6 +1383,10 @@
     transform: scaleX(-1);
 }
 
+.oc .hidden {
+    display: none !important;
+}
+
 @media screen and (max-width: 1200px) {
     .oc .main-cards-container {
         grid-template-columns: 1fr;
@@ -1207,7 +1394,7 @@
         max-width: 95%;
         width: 95%;
     }
-    
+
     .oc .announcement-banner {
         grid-column: 1;
         width: 80%;
@@ -1219,7 +1406,7 @@
         width: 100%;
         max-width: 100%;
     }
-    
+
     .oc .main-card {
         grid-column: 1;
         grid-template-rows: auto auto auto auto;
@@ -1231,7 +1418,7 @@
         grid-column: 1;
         grid-row: 2;
     }
-    
+
     .oc .main-card:last-of-type {
         grid-column: 1;
         grid-row: 3;
@@ -1249,17 +1436,17 @@
         min-width: 200px;
         flex: 1;
     }
-    
+
     .oc .config-select {
         min-width: 200px;
         font-size: 14px;
     }
-    
+
     .oc .config-select option {
         font-size: 14px;
         max-width: 100%;
     }
-    
+
     .oc .card-row:nth-child(1),
     .oc .card-row:nth-child(2),
     .oc .card-row:nth-child(3),
@@ -1315,7 +1502,7 @@
         padding: 6px 6px;
         font-size: 11px;
     }
-    
+
     .oc .card-row:nth-child(1),
     .oc .card-row:nth-child(2),
     .oc .card-row:nth-child(3),
@@ -1338,12 +1525,12 @@
         font-size: 13px;
         padding: 4px 10px;
     }
-    
+
     .oc .config-select option {
         font-size: 13px;
         padding: 6px 10px;
     }
-    
+
     .oc .config-selector::after {
         right: 10px;
         border-left: 3px solid transparent;
@@ -1354,7 +1541,7 @@
     .oc .config-subscription-info {
         margin-left: 12px;
     }
-    
+
     .oc .subscription-info-container {
         padding: 8px;
     }
@@ -1373,14 +1560,22 @@
         align-items: stretch;
         gap: 8px;
     }
-    
+
     .oc .config-file-bottom .card-actions {
         justify-content: center;
         gap: 5px;
     }
-    
+
     .oc .subscription-info-text {
         font-size: 10px;
+    }
+
+    .oc .subscription-info-title {
+        font-size: 13px;
+    }
+
+    .oc .subscription-progress-bar {
+        height: 10px;
     }
 
     .oc .file-info {
@@ -1397,7 +1592,7 @@
         font-size: 14px !important;
         padding: 0 24px !important;
     }
-    
+
     .oc .config-file-empty-message {
         font-size: 14px;
     }
@@ -1437,6 +1632,13 @@
         min-width: 24px;
     }
 
+    .oc .subscription-overwrite-tag {
+        height: 24px;
+        width: fit-content;
+        font-size: 10px;
+        padding: 0 6px;
+    }
+
     .oc .icon-btn svg {
         width: 12px !important;
         height: 12px !important;
@@ -1449,7 +1651,7 @@
     }
 
     .oc .dashboard-btn {
-        font-size: 8px !important;
+        font-size: 9px !important;
         height: 25px !important;
     }
 
@@ -1474,7 +1676,7 @@
         align-items: stretch;
         gap: 12px;
     }
-    
+
     .oc .config-subscription-info {
         margin-left: 0;
         justify-content: center;
@@ -1483,7 +1685,7 @@
     .oc .subscription-info-header {
         gap: 6px;
     }
-    
+
     .oc .file-info {
         gap: 4px;
         font-size: 8px;
@@ -1493,7 +1695,7 @@
         flex-direction: row;
         gap: 8px;
     }
-    
+
     .oc .card-row:nth-child(1),
     .oc .card-row:nth-child(2),
     .oc .card-row:nth-child(3),
@@ -1505,18 +1707,18 @@
         min-width: 110px;
         flex: 1;
     }
-    
+
     .oc .config-select {
         min-width: 110px;
         font-size: 12px;
         padding: 4px 8px;
     }
-    
+
     .oc .config-select option {
         font-size: 12px;
         padding: 5px 8px;
     }
-    
+
     .oc .config-selector::after {
         right: 8px;
     }
@@ -1546,6 +1748,10 @@
 
     .oc .subscription-info-text {
         font-size: 10px;
+    }
+
+    .oc .subscription-info-title {
+        font-size: 13px;
     }
 
     .oc .config-file-name {
@@ -1603,12 +1809,12 @@
         font-size: 13px !important;
         padding: 0 20px !important;
     }
-    
+
     .oc .config-file-empty-state {
         padding: 30px 15px;
         gap: 15px;
     }
-    
+
     .oc .config-file-empty-message {
         font-size: 13px;
     }
@@ -1673,8 +1879,9 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button type="button" class="icon-btn theme-toggle-btn" id="theme-toggle" title="<%:Theme Switch%>" onclick="toggleTheme()">
+                                    <button type="button" class="icon-btn theme-toggle-btn" id="theme-toggle" onclick="toggleThemeMode()">
                                         <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <title><%:Light Theme%></title>
                                             <circle cx="12" cy="12" r="5"></circle>
                                             <line x1="12" y1="1" x2="12" y2="3"></line>
                                             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -1685,8 +1892,16 @@
                                             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
                                             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                                         </svg>
-                                        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none">
+                                            <title><%:Dark Theme%></title>
                                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                        </svg>
+                                        <svg id="auto-icon" width="14" height="14" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="4" style="display: none">
+                                            <title><%:Auto Theme%></title>
+                                            <path d="M24 44C29.9601 44 26.3359 35.136 30 31C33.1264 27.4709 44 29.0856 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z"/>
+                                            <path d="M28 17C29.6569 17 31 15.6569 31 14C31 12.3431 29.6569 11 28 11C26.3431 11 25 12.3431 25 14C25 15.6569 26.3431 17 28 17Z"/>
+                                            <path d="M16 21C17.6569 21 19 19.6569 19 18C19 16.3431 17.6569 15 16 15C14.3431 15 13 16.3431 13 18C13 19.6569 14.3431 21 16 21Z"/>
+                                            <path d="M17 34C18.6569 34 20 32.6569 20 31C20 29.3431 18.6569 28 17 28C15.3431 28 14 29.3431 14 31C14 32.6569 15.3431 34 17 34Z"/>
                                         </svg>
                                     </button>
                                     <button type="button" class="icon-btn action-btn" id="go_wiki" title="<%:Wiki%>" onclick="return wikipage()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg></button>
@@ -1802,19 +2017,24 @@
                                                     </div>
                                                     <div id="subscription-info-text" class="subscription-info-text"><%:Collecting data...%></div>
                                                 </div>
-                                                <div class="card-actions">
-                                                    <button type="button" class="icon-btn action-btn" id="refresh-subscription" title="<%:Refresh%>" onclick="return refreshSubscriptionInfo()">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                            <path d="M23 4v6h-6"></path>
-                                                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                                                        </svg>
-                                                    </button>
-                                                    <button type="button" class="icon-btn action-btn" id="config-subscription-url" title="<%:Specify URL%>" onclick="return setSubscriptionUrl()">
-                                                        <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M18.2838 43.1713C14.9327 42.1736 11.9498 40.3213 9.58787 37.867C10.469 36.8227 11 35.4734 11 34.0001C11 30.6864 8.31371 28.0001 5 28.0001C4.79955 28.0001 4.60139 28.01 4.40599 28.0292C4.13979 26.7277 4 25.3803 4 24.0001C4 21.9095 4.32077 19.8938 4.91579 17.9995C4.94381 17.9999 4.97188 18.0001 5 18.0001C8.31371 18.0001 11 15.3138 11 12.0001C11 11.0488 10.7786 10.1493 10.3846 9.35011C12.6975 7.1995 15.5205 5.59002 18.6521 4.72314C19.6444 6.66819 21.6667 8.00013 24 8.00013C26.3333 8.00013 28.3556 6.66819 29.3479 4.72314C32.4795 5.59002 35.3025 7.1995 37.6154 9.35011C37.2214 10.1493 37 11.0488 37 12.0001C37 15.3138 39.6863 18.0001 43 18.0001C43.0281 18.0001 43.0562 17.9999 43.0842 17.9995C43.6792 19.8938 44 21.9095 44 24.0001C44 25.3803 43.8602 26.7277 43.594 28.0292C43.3986 28.01 43.2005 28.0001 43 28.0001C39.6863 28.0001 37 30.6864 37 34.0001C37 35.4734 37.531 36.8227 38.4121 37.867C36.0502 40.3213 33.0673 42.1736 29.7162 43.1713C28.9428 40.752 26.676 39.0001 24 39.0001C21.324 39.0001 19.0572 40.752 18.2838 43.1713Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
-                                                            <path d="M24 31C27.866 31 31 27.866 31 24C31 20.134 27.866 17 24 17C20.134 17 17 20.134 17 24C17 27.866 20.134 31 24 31Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
-                                                        </svg>
-                                                    </button>
+                                                <div class="card-actions subscription-actions-row">
+                                                    <div id="subscription-overwrite-tags" class="subscription-overwrite-tags" style="display: none;"></div>
+                                                    <div class="subscription-action-buttons">
+                                                        <button type="button" class="icon-btn action-btn" id="refresh-subscription" title="<%:Refresh%>" onclick="return refreshSubscriptionInfo()">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                <path d="M23 4v6h-6"></path>
+                                                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                                            </svg>
+                                                        </button>
+                                                        <button type="button" class="icon-btn action-btn" id="config-subscription-url" title="<%:Specify URL%>" onclick="return setSubscriptionUrl()">
+                                                            <svg width="14" height="14" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4">
+                                                                <path d="M4 6H44V36H29L24 41L19 36H4V6Z"/>
+                                                                <path d="M23 21H25.0025" />
+                                                                <path d="M33.001 21H34.9999"/>
+                                                                <path d="M13.001 21H14.9999"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1828,10 +2048,10 @@
                                                 <polyline points="17,8 12,3 7,8"></polyline>
                                                 <line x1="12" y1="3" x2="12" y2="15"></line>
                                             </svg>
-                                            <%:Upload Config File%>
+                                            <%:Add Config File%>
                                         </button>
                                     </div>
-                                    
+
                                     <div class="config-file-bottom">
                                         <div class="config-selector">
                                             <select id="config_file_select" class="config-select"><option value=""><%:Collecting data...%></option></select>
@@ -1840,6 +2060,7 @@
                                             <button type="button" class="icon-btn action-btn" id="switch_config" title="<%:SwiTch%>" onclick="return switchConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="update_config" title="<%:Update%>" onclick="return updateConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="edit_config" title="<%:Edit%>" onclick="return editConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                                            <button type="button" class="icon-btn action-btn" id="edit_subscribe" title="<%:Edit Subscription%>" onclick="return editSubscribe()"><svg width="14" height="14" viewBox="0 0 48 48" fill="none"><path d="M18.2838 43.1713C14.9327 42.1736 11.9498 40.3213 9.58787 37.867C10.469 36.8227 11 35.4734 11 34.0001C11 30.6864 8.31371 28.0001 5 28.0001C4.79955 28.0001 4.60139 28.01 4.40599 28.0292C4.13979 26.7277 4 25.3803 4 24.0001C4 21.9095 4.32077 19.8938 4.91579 17.9995C4.94381 17.9999 4.97188 18.0001 5 18.0001C8.31371 18.0001 11 15.3138 11 12.0001C11 11.0488 10.7786 10.1493 10.3846 9.35011C12.6975 7.1995 15.5205 5.59002 18.6521 4.72314C19.6444 6.66819 21.6667 8.00013 24 8.00013C26.3333 8.00013 28.3556 6.66819 29.3479 4.72314C32.4795 5.59002 35.3025 7.1995 37.6154 9.35011C37.2214 10.1493 37 11.0488 37 12.0001C37 15.3138 39.6863 18.0001 43 18.0001C43.0281 18.0001 43.0562 17.9999 43.0842 17.9995C43.6792 19.8938 44 21.9095 44 24.0001C44 25.3803 43.8602 26.7277 43.594 28.0292C43.3986 28.01 43.2005 28.0001 43 28.0001C39.6863 28.0001 37 30.6864 37 34.0001C37 35.4734 37.531 36.8227 38.4121 37.867C36.0502 40.3213 33.0673 42.1736 29.7162 43.1713C28.9428 40.752 26.676 39.0001 24 39.0001C21.324 39.0001 19.0572 40.752 18.2838 43.1713Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 31C27.866 31 31 27.866 31 24C31 20.134 27.866 17 24 17C20.134 17 17 20.134 17 24C17 27.866 20.134 31 24 31Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="upload_config" title="<%:Add%>" onclick="return uploadConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
                                         </div>
                                     </div>
@@ -1971,13 +2192,22 @@
         init: function() {
             this.applyDarkMode();
         },
-        
+
         applyDarkMode: function() {
             var ocContainers = document.querySelectorAll('.oc');
             if (!ocContainers.length) return;
 
-            var shouldUseDark = isDarkBackground(document.body);
-            
+            var theme = localStorage.getItem('oc-theme') || 'auto';
+            var shouldUseDark;
+
+            if (theme === 'light') {
+                shouldUseDark = false;
+            } else if (theme === 'dark') {
+                shouldUseDark = true;
+            } else {
+                shouldUseDark = isDarkBackground(document.body);
+            }
+
             ocContainers.forEach(function(ocContainer) {
                 if (shouldUseDark) {
                     ocContainer.setAttribute('data-darkmode', 'true');
@@ -1988,13 +2218,18 @@
 
             var sunIcon = document.getElementById('sun-icon');
             var moonIcon = document.getElementById('moon-icon');
-            if (sunIcon && moonIcon) {
-                if (shouldUseDark) {
-                    sunIcon.style.display = 'none';
+            var autoIcon = document.getElementById('auto-icon');
+            if (sunIcon && moonIcon && autoIcon) {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'none';
+                autoIcon.style.display = 'none';
+
+                if (theme === 'light') {
+                    sunIcon.style.display = 'inline';
+                } else if (theme === 'dark') {
                     moonIcon.style.display = 'inline';
                 } else {
-                    sunIcon.style.display = 'inline';
-                    moonIcon.style.display = 'none';
+                    autoIcon.style.display = 'inline';
                 }
             }
         }
@@ -2007,7 +2242,7 @@
         request_cache: {},
         cache_ttl: 5000,
         pending_requests: new Map(),
-        
+
         _cachedXHR: function(url, params, callback, force) {
             var cacheKey = params ? url + JSON.stringify(params) : url;
             var now = Date.now();
@@ -2026,7 +2261,7 @@
                 }, 0);
                 return;
             }
-            
+
             if (!force && cacheExists && isCacheStale) {
                 setTimeout(function() {
                     callback({ status: 200, fromCache: true, stale: true }, StateManager.request_cache[cacheKey]);
@@ -2061,23 +2296,23 @@
         cachedXHRGetWithParams: function(url, params, callback, force) {
             this._cachedXHR(url, params, callback, force);
         },
-        
+
         clearCache: function(url, params) {
             var cacheKey = params ? url + JSON.stringify(params) : url;
             delete this.request_cache[cacheKey];
             delete this.last_request_time[cacheKey];
         },
-        
+
         clearAllCache: function() {
             this.request_cache = {};
             this.last_request_time = {};
         },
-        
+
         hasCache: function(url, params) {
             var cacheKey = params ? url + JSON.stringify(params) : url;
             return !!this.request_cache[cacheKey];
         },
-        
+
         getCacheAge: function(url, params) {
             var cacheKey = params ? url + JSON.stringify(params) : url;
             if (!this.last_request_time[cacheKey]) {
@@ -2085,13 +2320,12 @@
             }
             return Date.now() - this.last_request_time[cacheKey];
         },
-        
+
         setCacheTTL: function(ttl) {
             this.cache_ttl = ttl;
         },
-        
+
         batchUpdateDOM: function(updates) {
-            var fragment = document.createDocumentFragment();
             for (var i = 0; i < updates.length; i++) {
                 var update = updates[i];
                 if (update.element && update.content !== undefined) {
@@ -2099,12 +2333,12 @@
                 }
             }
         },
-        
+
         cachedXHRGetWithRetry: function(url, params, callback, force, maxRetries) {
             maxRetries = maxRetries || 3;
             var retryCount = 0;
             var self = this;
-            
+
             function attemptRequest() {
                 self.cachedXHRGetWithParams(url, params, function(x, data) {
                     if (x && x.status == 200) {
@@ -2117,7 +2351,7 @@
                     }
                 }, force && retryCount === 0);
             }
-            
+
             attemptRequest();
         }
     };
@@ -2130,14 +2364,10 @@
             DISCONNECTED: 2,
             ERROR: 3
         },
-        retryAttempts: {},
-        maxRetries: 3,
-        reconnectDelay: 2000,
+        reconnectDelay: 5000,
         heartbeatInterval: 30000,
         heartbeatTimers: {},
         _ws_connect: false,
-        _ws_error: false,
-        _ws_retry: 0,
         _allowedCloseCodes: [1000, 1001, 1005, 1006],
 
         isSupported: function() {
@@ -2165,8 +2395,6 @@
                     lastActivity: Date.now(),
                     options: options
                 };
-
-                this.retryAttempts[type] = 0;
 
                 if (ws.addEventListener) {
                     ws.addEventListener('open', this.handleOpen.bind(this, type));
@@ -2244,8 +2472,6 @@
                 this.closeConnection(types[i]);
             }
             this._ws_connect = false;
-            this._ws_error = false;
-            this._ws_retry = 0;
         },
 
         handleMessage: function(type, event) {
@@ -2271,13 +2497,13 @@
                 connection.state = this.connectionStates.CONNECTED;
                 connection.lastActivity = Date.now();
             }
-            this.retryAttempts[type] = 0;
             this.startHeartbeat(type);
 
-            if (type === 'traffic' || Object.keys(this.connections).length === 3) {
+            if (Object.keys(this.connections).length === 3) {
                 this._ws_connect = true;
-                this._ws_error = false;
-                this._ws_retry = 0;
+                if (NetworkStatsManager.isEnabled) {
+                    NetworkStatsManager.stop();
+                }
             }
         },
 
@@ -2286,15 +2512,14 @@
             if (connection) {
                 connection.state = this.connectionStates.ERROR;
             }
-            this._ws_error = true;
             this.stopHeartbeat(type);
-
-            if (type === 'traffic') {
-                this.enableFallbackMode();
-            }
+            this.enableFallbackMode();
         },
 
         handleClose: function(type, event) {
+            // if not connected, start log display because core maybe restart
+            LogManager.startLogDisplay();
+
             var connection = this.connections[type];
             if (connection) {
                 connection.state = this.connectionStates.DISCONNECTED;
@@ -2311,7 +2536,6 @@
             if (connection) {
                 connection.state = this.connectionStates.ERROR;
             }
-            this._ws_error = true;
             this.enableFallbackMode();
         },
 
@@ -2319,25 +2543,22 @@
             var self = this;
             var connection = this.connections[type];
 
-            if (!connection || this.retryAttempts[type] >= this.maxRetries) {
+            if (!connection) {
                 this.enableFallbackMode();
                 return;
             }
-
-            this.retryAttempts[type] = (this.retryAttempts[type] || 0) + 1;
-            var delay = this.reconnectDelay * Math.pow(1.5, this.retryAttempts[type] - 1);
 
             setTimeout(function() {
                 if (self.connections[type] && self.connections[type].state !== self.connectionStates.CONNECTED) {
                     self.createConnection(type, connection.url, connection.messageHandler, connection.options);
                 }
-            }, delay);
+            }, this.reconnectDelay);
         },
 
         enableFallbackMode: function() {
             this._ws_connect = false;
             this.closeAll();
-            if (typeof NetworkStatsManager !== "undefined" && !NetworkStatsManager.isEnabled) {
+            if (!NetworkStatsManager.isEnabled) {
                 NetworkStatsManager.start();
             }
         },
@@ -2362,14 +2583,6 @@
                 }
             }
             return false;
-        },
-
-        resetRetryCount: function(type) {
-            if (type) {
-                this.retryAttempts[type] = 0;
-            } else {
-                this.retryAttempts = {};
-            }
         }
     };
 
@@ -2379,7 +2592,7 @@
         currentConfigIndex: -1,
         selectElement: null,
         rawCurrentConfig: '',
-        
+
         init: function() {
             this.selectElement = document.getElementById('config_file_select');
             if (this.selectElement) {
@@ -2387,16 +2600,16 @@
                 this.setupEventListeners();
             }
         },
-        
+
         setupEventListeners: function() {
             if (this.selectElement) {
                 this.selectElement.addEventListener('change', this.onConfigChange.bind(this));
             }
         },
-        
+
         loadConfigFileList: function() {
             this.updateSelectOptions([{value: '', text: '<%:Collecting data...%>', disabled: true}]);
-            
+
             StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "config_file_list")%>', function(x, data) {
                 if (x && x.status == 200) {
                     ConfigFileManager.handleConfigListResponse(data);
@@ -2405,34 +2618,36 @@
                 }
             }, true);
         },
-        
+
         handleConfigListResponse: function(data) {
             try {
                 var configFiles = [];
                 var currentConfigFile = '';
                 var currentFileInfo = null;
-                
+
                 if (data.config_files && Array.isArray(data.config_files)) {
                     configFiles = data.config_files;
-                } else if (data.files && Array.isArray(data.files)) {
-                    configFiles = data.files;
+                    configFiles.sort(function(a, b) {
+                        var nameA = typeof a === 'string' ? a : (a.name || a.filename || a.path || a);
+                        var nameB = typeof b === 'string' ? b : (b.name || b.filename || b.path || b);
+                        return nameA.localeCompare(nameB);
+                    });
                 } else {
-                    configFiles = data.config_list || [];
+                    configFiles = [];
                 }
-                
+
                 if (data.current_config) {
                     currentConfigFile = data.current_config;
-                } else if (data.current) {
-                    currentConfigFile = data.current;
                 }
-                
+
                 this.rawCurrentConfig = currentConfigFile;
                 this.configList = configFiles;
+                window.configFiles = configFiles;
                 this.currentConfig = currentConfigFile;
                 this.currentConfigIndex = -1;
 
                 this.toggleEmptyState(configFiles.length === 0);
-                
+
                 this.updateConfigSelect(configFiles, currentConfigFile);
 
                 if (configFiles.length > 0) {
@@ -2440,7 +2655,7 @@
                         for (var i = 0; i < configFiles.length; i++) {
                             var file = configFiles[i];
                             var filePath = typeof file === 'string' ? file : (file.path || file.filepath || file);
-                            
+
                             if (filePath === currentConfigFile) {
                                 this.currentConfigIndex = i;
                                 if (typeof file === 'object' && file.mtime && file.size) {
@@ -2453,10 +2668,10 @@
                             }
                         }
                     }
-                    
+
                     this.updateSubscriptionDisplay(currentConfigFile, currentFileInfo);
-                    
-                    if (currentConfigFile && SubscriptionManager.currentConfigFile !== currentConfigFile) {
+
+                    if (SubscriptionManager.currentConfigFile !== currentConfigFile) {
                         SubscriptionManager.currentConfigFile = currentConfigFile;
                         SubscriptionManager.getSubscriptionInfo();
                     }
@@ -2464,24 +2679,24 @@
                     this.hideSubscriptionDisplay();
                     SubscriptionManager.currentConfigFile = '';
                 }
-                
+
                 this.updateNavigationArrows();
 
                 if (this._retryGetConfigList) {
                     clearInterval(this._retryGetConfigList);
                     this._retryGetConfigList = null;
                 }
-                
+
             } catch (e) {
                 this.handleConfigListError();
             }
         },
-        
+
         handleConfigListError: function() {
             this.updateSelectOptions([
                 {value: '', text: '<%:Failed to load config files%>', disabled: true}
             ]);
-            
+
             this.toggleEmptyState(true);
             this.hideSubscriptionDisplay();
 
@@ -2497,7 +2712,7 @@
             var emptyStateElement = document.getElementById('config-file-empty-state');
             var configFileBottom = document.querySelector('.config-file-bottom');
             var configFileContent = document.querySelector('.config-file-content');
-            
+
             if (isEmpty) {
                 if (emptyStateElement) {
                     emptyStateElement.style.display = 'flex';
@@ -2521,17 +2736,17 @@
                 }
             }
         },
-        
+
         hideSubscriptionDisplay: function() {
             var subscriptionDisplay = document.getElementById('subscription-info-display');
             if (subscriptionDisplay) {
                 subscriptionDisplay.style.display = 'none';
             }
         },
-        
+
         updateConfigSelect: function(configFiles, currentConfig) {
             var options = [];
-            
+
             if (!configFiles || configFiles.length === 0) {
                 options.push({
                     value: '',
@@ -2544,10 +2759,10 @@
                     text: '<%:Please select a config file%>',
                     disabled: false
                 });
-                
+
                 configFiles.forEach(function(file) {
                     var fileName, filePath;
-                    
+
                     if (typeof file === 'string') {
                         fileName = file;
                         filePath = file;
@@ -2555,9 +2770,9 @@
                         fileName = file.name || file.filename || file.path || file;
                         filePath = file.path || file.filepath || file.name || file;
                     }
-                    
+
                     var displayName = fileName;
-                    
+
                     options.push({
                         value: filePath,
                         text: displayName,
@@ -2566,22 +2781,22 @@
                     });
                 });
             }
-            
+
             this.updateSelectOptions(options);
         },
-        
+
         updateSelectOptions: function(options) {
             if (!this.selectElement) return;
-            
+
             this.selectElement.innerHTML = '';
-            
+
             options.forEach(function(option) {
                 var optionElement = document.createElement('option');
                 optionElement.value = option.value;
                 optionElement.textContent = option.text;
                 optionElement.disabled = option.disabled || false;
                 optionElement.selected = option.selected || false;
-                
+
                 this.selectElement.appendChild(optionElement);
             }, this);
         },
@@ -2591,25 +2806,25 @@
             var configNameElement = document.getElementById('current-config-name');
             var fileModifyTimeElement = document.getElementById('file-modify-time');
             var detailsSection = document.getElementById('subscription-info-details');
-            
+
             if (!container) return;
-            
+
             if (this.configList.length === 0) {
                 container.style.display = 'none';
                 return;
             }
-            
+
             if (!configFile) {
                 container.style.display = 'none';
                 return;
             }
-            
+
             var configFileContent = document.querySelector('.config-file-content');
             if (configFileContent && configFileContent.classList.contains('empty-state')) {
                 container.style.display = 'none';
                 return;
             }
-            
+
             container.style.display = 'flex';
 
             if (configNameElement) {
@@ -2628,7 +2843,7 @@
                     configNameElement.title = '';
                 }
             }
-            
+
             if (fileInfo) {
                 if (fileModifyTimeElement) {
                     var modifyTime = this.formatUnixTime(fileInfo.mtime);
@@ -2639,7 +2854,7 @@
                         fileModifyTimeElement.title = '';
                     }
                 }
-                
+
                 if (detailsSection) {
                     detailsSection.style.display = 'flex';
                 }
@@ -2647,7 +2862,7 @@
                 if (fileModifyTimeElement) {
                     fileModifyTimeElement.textContent = '<%:Update Time%> --';
                 }
-                
+
                 if (detailsSection) {
                     detailsSection.style.display = 'none';
                 }
@@ -2658,7 +2873,7 @@
             if (!unixTimestamp || unixTimestamp === 0) {
                 return '--';
             }
-            
+
             try {
                 var date = new Date(unixTimestamp * 1000);
                 var year = date.getFullYear();
@@ -2667,7 +2882,7 @@
                 var hour = String(date.getHours()).padStart(2, '0');
                 var minute = String(date.getMinutes()).padStart(2, '0');
                 var second = String(date.getSeconds()).padStart(2, '0');
-                
+
                 return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
             } catch (e) {
                 return '--';
@@ -2676,51 +2891,51 @@
 
         formatFileSize: function(bytes) {
             if (!bytes || bytes === 0) return '--';
-            
+
             var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
             var i = Math.floor(Math.log(bytes) / Math.log(1024));
-            
+
             if (i === 0) {
                 return bytes + ' ' + sizes[i];
             }
-            
+
             return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
         },
-        
+
         formatDisplayName: function(fileName) {
             if (!fileName) return '<%:Unknown%>';
-            
+
             var name = fileName.split('/').pop().split('\\').pop();
-            
+
             //name = name.replace(/\.(yaml|yml)$/i, '');
-            
+
             if (name.length > 30) {
                 name = name.substring(0, 27) + '...';
             }
-            
+
             return name;
         },
-        
+
         onConfigChange: function(event) {
             var selectedValue = event.target.value;
-            
+
             if (selectedValue) {
                 this.currentConfig = selectedValue;
-                
+
                 for (var i = 0; i < this.configList.length; i++) {
                     var file = this.configList[i];
                     var filePath = typeof file === 'string' ? file : (file.path || file.filepath || file);
-                    
+
                     if (filePath === selectedValue) {
                         this.currentConfigIndex = i;
                         break;
                     }
                 }
-                
+
                 var selectedFileInfo = this.getConfigFileInfo(selectedValue);
                 this.updateSubscriptionDisplay(selectedValue, selectedFileInfo);
                 this.updateNavigationArrows();
-                
+
                 if (SubscriptionManager.currentConfigFile !== selectedValue) {
                     SubscriptionManager.currentConfigFile = selectedValue;
                     var detailsSection = document.getElementById('subscription-info-details');
@@ -2729,12 +2944,14 @@
                     }
                     SubscriptionManager.getSubscriptionInfo();
                 }
+                OverwriteSubscribeManager.render(OverwriteSubscribeManager.data);
             } else {
                 this.currentConfig = '';
                 this.currentConfigIndex = -1;
                 SubscriptionManager.currentConfigFile = '';
                 this.hideSubscriptionDisplay();
                 this.updateNavigationArrows();
+                OverwriteSubscribeManager.render(OverwriteSubscribeManager.data);
             }
         },
 
@@ -2743,7 +2960,7 @@
             for (var i = 0; i < this.configList.length; i++) {
                 var file = this.configList[i];
                 var filePath = typeof file === 'string' ? file : (file.path || file.filepath || file);
-                
+
                 if (filePath === selectedValue) {
                     if (typeof file === 'object' && file.mtime && file.size) {
                         selectedFileInfo = {
@@ -2756,54 +2973,54 @@
             }
             return selectedFileInfo;
         },
-        
+
         updateNavigationArrows: function() {
             var prevArrow = document.getElementById('subscription-prev-arrow');
             var nextArrow = document.getElementById('subscription-next-arrow');
-            
+
             if (!prevArrow || !nextArrow) return;
-            
+
             var hasMultipleConfigs = this.configList.length > 1;
             var currentIndex = this.currentConfigIndex;
-            
+
             if (!hasMultipleConfigs || currentIndex === -1) {
                 prevArrow.style.display = 'none';
                 nextArrow.style.display = 'none';
                 return;
             }
-            
+
             prevArrow.style.display = 'block';
             nextArrow.style.display = 'block';
-            
+
             prevArrow.classList.remove('disabled');
             nextArrow.classList.remove('disabled');
         },
-        
+
         switchToConfigByIndex: function(index) {
             if (this.configList.length === 0) {
                 return false;
             }
-            
+
             if (index < 0) {
                 index = this.configList.length - 1; 
             } else if (index >= this.configList.length) {
                 index = 0;
             }
-            
+
             var file = this.configList[index];
             var filePath = typeof file === 'string' ? file : (file.path || file.filepath || file);
-            
+
             if (this.selectElement) {
                 this.selectElement.value = filePath;
             }
-            
+
             this.currentConfig = filePath;
             this.currentConfigIndex = index;
-            
+
             var fileInfo = this.getConfigFileInfo(filePath);
             this.updateSubscriptionDisplay(filePath, fileInfo);
             this.updateNavigationArrows();
-            
+
             if (SubscriptionManager.currentConfigFile !== filePath) {
                 SubscriptionManager.currentConfigFile = filePath;
                 var detailsSection = document.getElementById('subscription-info-details');
@@ -2812,18 +3029,20 @@
                 }
                 SubscriptionManager.getSubscriptionInfo();
             }
-            
+
+            OverwriteSubscribeManager.render(OverwriteSubscribeManager.data);
+
             return true;
         },
-        
+
         refreshConfigList: function() {
             this.loadConfigFileList();
         },
-        
+
         getCurrentConfig: function() {
             return this.currentConfig;
         },
-        
+
         getSelectedConfig: function() {
             return this.selectElement ? this.selectElement.value : '';
         }
@@ -2835,59 +3054,159 @@
         maxRetries: 5,
         updateTimer: null,
         isInitialized: false,
-        
+
+        enableOverflowDrag: function(element) {
+            if (!element) return;
+
+            function updateDragState() {
+                var isOverflowing = element.scrollWidth > element.clientWidth + 1;
+                if (isOverflowing) {
+                    element.classList.add('is-draggable');
+                } else {
+                    element.classList.remove('is-draggable');
+                    element.classList.remove('dragging');
+                    element.scrollLeft = 0;
+                }
+            }
+
+            if (!element._dragBound) {
+                var isDragging = false;
+                var startX = 0;
+                var startScrollLeft = 0;
+                var touchIdentifier = null;
+
+                function endDrag() {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    touchIdentifier = null;
+                    element.classList.remove('dragging');
+                }
+
+                element.addEventListener('mousedown', function(e) {
+                    if (!element.classList.contains('is-draggable')) return;
+                    isDragging = true;
+                    startX = e.pageX - element.getBoundingClientRect().left;
+                    startScrollLeft = element.scrollLeft;
+                    element.classList.add('dragging');
+                    e.preventDefault();
+                });
+
+                element.addEventListener('mousemove', function(e) {
+                    if (!isDragging) return;
+                    var x = e.pageX - element.getBoundingClientRect().left;
+                    var walk = (x - startX) * 1.2;
+                    element.scrollLeft = startScrollLeft - walk;
+                    e.preventDefault();
+                });
+
+                element.addEventListener('mouseleave', function() {
+                    endDrag();
+                });
+
+                element.addEventListener('mouseup', function() {
+                    endDrag();
+                });
+
+                element.addEventListener('touchstart', function(e) {
+                    if (!element.classList.contains('is-draggable')) return;
+                    if (!e.touches || e.touches.length !== 1) return;
+
+                    var touch = e.touches[0];
+                    isDragging = true;
+                    touchIdentifier = touch.identifier;
+                    startX = touch.pageX - element.getBoundingClientRect().left;
+                    startScrollLeft = element.scrollLeft;
+                    element.classList.add('dragging');
+                }, { passive: true });
+
+                element.addEventListener('touchmove', function(e) {
+                    if (!isDragging || !e.touches || e.touches.length === 0) return;
+
+                    var touch = null;
+                    for (var i = 0; i < e.touches.length; i++) {
+                        if (e.touches[i].identifier === touchIdentifier) {
+                            touch = e.touches[i];
+                            break;
+                        }
+                    }
+
+                    if (!touch) return;
+
+                    var x = touch.pageX - element.getBoundingClientRect().left;
+                    var walk = (x - startX) * 1.2;
+                    element.scrollLeft = startScrollLeft - walk;
+                    e.preventDefault();
+                }, { passive: false });
+
+                element.addEventListener('touchend', function() {
+                    endDrag();
+                });
+
+                element.addEventListener('touchcancel', function() {
+                    endDrag();
+                });
+
+                element.addEventListener('dragstart', function(e) {
+                    e.preventDefault();
+                });
+
+                element._dragBound = true;
+            }
+
+            updateDragState();
+        },
+
         init: function() {
             if (this.isInitialized) return;
             this.isInitialized = true;
-            
-            setTimeout(function() {
-                SubscriptionManager.loadSubscriptionInfo();
-                SubscriptionManager.startAutoUpdate();
-            }, 500);
+            SubscriptionManager.loadSubscriptionInfo();
+            SubscriptionManager.startAutoUpdate();
         },
-        
+
         loadSubscriptionInfo: function() {
             var currentConfig = ConfigFileManager.getCurrentConfig() || ConfigFileManager.getSelectedConfig();
-            if (currentConfig && currentConfig !== this.currentConfigFile) {
+            if (currentConfig !== this.currentConfigFile) {
                 this.currentConfigFile = currentConfig;
                 this.getSubscriptionInfo();
             }
         },
-        
+
         getSubscriptionInfo: function() {
             if (ConfigFileManager.configList.length === 0) {
                 return;
             }
-            
+
             if (!this.currentConfigFile) return;
-            
+
             var requestConfigFile = this.currentConfigFile;
             var filename = this.extractFilename(this.currentConfigFile);
             if (!filename) return;
-            
+
             var cachedData = localStorage.getItem('sub_info_' + filename);
             var shouldFetchNew = true;
-            
+
             if (cachedData) {
                 try {
                     var parsedData = JSON.parse(cachedData);
 
-                    if (parsedData.sub_info && parsedData.sub_info !== "No Sub Info Found") {
-                        if (this.currentConfigFile === requestConfigFile) {
-                            this.displaySubscriptionInfo(parsedData);
-                        }
-                    } else if (parsedData.sub_info === "No Sub Info Found") {
-                        if (this.currentConfigFile === requestConfigFile) {
-                            this.showNoInfo();
+                    if (parsedData.providers) {
+                        if (parsedData.providers.length > 0) {
+                            if (this.currentConfigFile === requestConfigFile) {
+                                this.displaySubscriptionInfo(parsedData);
+                            }
+                        } else {
+                            if (this.currentConfigFile === requestConfigFile) {
+                                this.showNoInfo();
+                            }
                         }
                     }
-                    
+
                     if (parsedData.get_time) {
                         var currentTime = Math.floor(Date.now() / 1000);
                         var cacheTime = parseInt(parsedData.get_time);
                         var timeDiff = currentTime - cacheTime;
                         var halfHourInSeconds = 30 * 60;
-                        
+
                         if (timeDiff <= halfHourInSeconds) {
                             shouldFetchNew = false;
                         }
@@ -2896,38 +3215,57 @@
                     shouldFetchNew = true;
                 }
             }
-            
+
             if (shouldFetchNew) {
+                if (!cachedData) {
+                    this.showLoading();
+                }
+
                 StateManager.cachedXHRGetWithParams('<%=luci.dispatcher.build_url("admin", "services", "openclash", "sub_info_get")%>', {filename: filename}, function(x, status) {
                     if (SubscriptionManager.currentConfigFile !== requestConfigFile) {
                         return;
                     }
-                    if (x && x.status == 200 && status.sub_info && status.sub_info !== "No Sub Info Found") {
-                        SubscriptionManager.retryCount = 0;
-                        localStorage.setItem('sub_info_' + filename, JSON.stringify(status));
-                        SubscriptionManager.displaySubscriptionInfo(status);
-                    } else if (x && x.status == 200 && status.sub_info === "No Sub Info Found") {
-                        SubscriptionManager.retryCount = 0;
-                        localStorage.setItem('sub_info_' + filename, JSON.stringify(status));
-                        SubscriptionManager.showNoInfo();
+
+                    var needsErrorHandling = false;
+                    if (x && x.status == 200 && status.providers) {
+                        var newProvidersLength = (status.providers) ? status.providers.length : 0;
+                        var cachedProvidersLength = (parsedData && parsedData.providers) ? parsedData.providers.length : 0;
+
+                        if (newProvidersLength !== cachedProvidersLength && cachedProvidersLength > newProvidersLength) {
+                            needsErrorHandling = true;
+                        }
+
+                        if (!needsErrorHandling) {
+                            SubscriptionManager.retryCount = 0;
+                            localStorage.setItem('sub_info_' + filename, JSON.stringify(status));
+                            if (status.providers && status.providers.length === 0) {
+                                SubscriptionManager.showNoInfo();
+                            }
+                            SubscriptionManager.displaySubscriptionInfo(status);
+                        }
                     } else {
-                        SubscriptionManager.handleError();
+                        needsErrorHandling = true;
+                        if (!cachedData) {
+                            SubscriptionManager.showNoInfo();
+                        }
+                    }
+
+                    if (needsErrorHandling) {
+                        SubscriptionManager.handleError(status);
                     }
                 }, true);
             }
         },
-        
+
         displaySubscriptionInfo: function(data) {
             if (ConfigFileManager.configList.length === 0) {
                 return;
             }
-            
+
             var container = document.getElementById('subscription-info-display');
             var progressSection = document.getElementById('subscription-progress-section');
             var detailsSection = document.getElementById('subscription-info-details');
-            var progressFill = document.getElementById('subscription-progress-fill');
-            var infoText = document.getElementById('subscription-info-text');
-            
+
             if (!container) return;
 
             var configFileContent = document.querySelector('.config-file-content');
@@ -2936,115 +3274,261 @@
             }
 
             container.style.display = 'flex';
-            
-            if (data && data.sub_info && data.sub_info !== "No Sub Info Found") {
-                if (progressSection) {
-                    progressSection.style.display = 'flex';
-                }
-                
-                if (!progressFill || !infoText) return;
-                
-                var percent = data.percent || 0;
-                var used = data.surplus || data.used || '0 B';
-                var total = data.total || '0 B';
-                var expire = data.expire || '';
-                var daysLeft = data.day_left || 0;
-                
-                progressFill.style.width = percent + '%';
-                progressFill.className = 'subscription-progress-fill ' + 
-                    (percent >= 50 ? 'high' : (percent >= 20 ? 'medium' : 'low'));
-                
-                var infoString = used + ' / ' + total + ' (' + percent + '%)';
-                if (expire && daysLeft > 0) {
-                    infoString += ' • ' + '<%:Remaining%> ' + daysLeft + ' <%:days%>';
-                    infoString += ' • ' + '<%:Expire Date%>: ' + expire;
-                }
-                
-                infoText.textContent = infoString;
-                if (infoText.scrollWidth > infoText.clientWidth) {
-                    infoText.title = infoString;
+
+            if (data && data.providers && data.providers.length > 0) {
+                if (data.providers.length > 1 || data.providers[0].provider_name) {
+                    this.displayMultipleProviders(data.providers, progressSection);
                 } else {
-                    infoText.title = '';
+                    this.displaySingleProvider(data.providers[0], progressSection);
                 }
-                
             } else {
-                if (progressSection) {
-                    progressSection.style.display = 'none';
-                }
+                progressSection.style.display = 'none';
             }
-            
+
             if (detailsSection) {
                 detailsSection.style.display = 'flex';
             }
         },
-        
+
+        displaySingleProvider: function(provider, progressSection) {
+            if (!progressSection) return;
+
+            progressSection.innerHTML = '';
+            progressSection.style.display = 'flex';
+            progressSection.className = 'subscription-progress';
+
+            var progressBar = document.createElement('div');
+            progressBar.className = 'subscription-progress-bar';
+
+            progressFill = document.createElement('div');
+            progressFill.className = 'subscription-progress-fill';
+            progressBar.appendChild(progressFill);
+
+            infoText = document.createElement('div');
+            infoText.className = 'subscription-info-text';
+
+            progressSection.appendChild(progressBar);
+            progressSection.appendChild(infoText);
+
+            var percent = parseFloat(provider.percent) || 0;
+            var used = String(provider.surplus || provider.used || '0 B');
+            var total = String(provider.total || '0 B');
+            var expire = String(provider.expire || '');
+            var daysLeft = parseInt(provider.day_left, 10);
+            if (isNaN(daysLeft)) daysLeft = 0;
+
+            progressFill.style.width = percent + '%';
+            progressFill.className = 'subscription-progress-fill ' +
+                (percent >= 50 ? 'high' : (percent >= 20 ? 'medium' : 'low'));
+
+            var infoString = used + ' / ' + total + ' (' + percent + '%)';
+            var tooltipString = infoString;
+            if (expire && expire !== 'null' && daysLeft > 0) {
+                infoString += ' • ' + expire + ' (<%:Remaining%> ' + daysLeft + ' <%:days%>)';
+                tooltipString += '\n' + expire + ' (<%:Remaining%> ' + daysLeft + ' <%:days%>)';
+            }
+
+            infoText.textContent = infoString;
+            infoText.title = tooltipString;
+            this.enableOverflowDrag(infoText);
+        },
+
+        displayMultipleProviders: function(providers, progressSection) {
+            if (!progressSection) return;
+
+            var displayProviders = providers;
+            var providerCount = displayProviders.length;
+
+            progressSection.innerHTML = '';
+            progressSection.style.display = 'flex';
+            progressSection.className = 'subscription-providers-grid';
+            progressSection.setAttribute('data-count', providerCount);
+
+            displayProviders.forEach(function(provider) {
+                var card = document.createElement('div');
+                card.className = 'provider-card';
+
+                var cardName = document.createElement('div');
+                var providerName = String(provider.provider_name || 'Unknown');
+                cardName.className = 'subscription-info-title';
+                cardName.textContent = providerName;
+                cardName.title = providerName;
+                card.appendChild(cardName);
+
+                var progressBar = document.createElement('div');
+                progressBar.className = 'subscription-progress-bar';
+
+                var progressFill = document.createElement('div');
+                var percent = parseFloat(provider.percent) || 0;
+                progressFill.style.width = percent + '%';
+                progressFill.className = 'subscription-progress-fill ' +
+                    (percent >= 50 ? 'high' : (percent >= 20 ? 'medium' : 'low'));
+
+                progressBar.appendChild(progressFill);
+                card.appendChild(progressBar);
+
+                var infoText = document.createElement('div');
+                infoText.className = 'subscription-info-text';
+
+                var used = String(provider.used || '0 B');
+                var total = String(provider.total || 'N/A');
+                var expire = String(provider.expire || '');
+                var daysLeft = parseInt(provider.day_left, 10);
+                if (isNaN(daysLeft)) daysLeft = 0;
+
+                var infoString = used + ' / ' + total + ' (' + percent + '%)';
+                if (expire && expire !== 'null' && daysLeft > 0) {
+                    infoString += ' • ' + expire + ' (<%:Remaining%> ' + daysLeft + ' <%:days%>)';
+                }
+
+                var tooltipString = used + ' / ' + total + ' (' + percent + '%)';
+                if (expire && expire !== 'null' && daysLeft > 0) {
+                    tooltipString += '\n' + expire + ' (<%:Remaining%> ' + daysLeft + ' <%:days%>)';
+                }
+
+                infoText.textContent = infoString;
+                infoText.title = tooltipString;
+                SubscriptionManager.enableOverflowDrag(infoText);
+
+                card.appendChild(infoText);
+                progressSection.appendChild(card);
+            });
+
+            if (providerCount > 3) {
+                this.initDragScroll(progressSection);
+            }
+        },
+
+        initDragScroll: function(element) {
+            var isDragging = false;
+            var startX;
+            var scrollLeft;
+            var hasMoved = false;
+
+            var onMouseDown = function(e) {
+                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                    return;
+                }
+
+                isDragging = true;
+                hasMoved = false;
+                startX = e.pageX - element.offsetLeft;
+                scrollLeft = element.scrollLeft;
+                element.classList.add('dragging');
+            };
+
+            var onMouseMove = function(e) {
+                if (!isDragging) return;
+
+                var x = e.pageX - element.offsetLeft;
+                var walk = (x - startX) * 1.5;
+
+                if (Math.abs(walk) > 5) {
+                    hasMoved = true;
+                    e.preventDefault();
+                    element.scrollLeft = scrollLeft - walk;
+                }
+            };
+
+            var onMouseUp = function() {
+                isDragging = false;
+                element.classList.remove('dragging');
+            };
+
+            var onMouseLeave = function() {
+                if (isDragging) {
+                    isDragging = false;
+                    element.classList.remove('dragging');
+                }
+            };
+
+            element.addEventListener('mousedown', onMouseDown);
+            element.addEventListener('mousemove', onMouseMove);
+            element.addEventListener('mouseup', onMouseUp);
+            element.addEventListener('mouseleave', onMouseLeave);
+
+            element.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+        },
+
         showNoInfo: function() {
             if (ConfigFileManager.configList.length === 0) {
                 return;
             }
-            
+
             var container = document.getElementById('subscription-info-display');
             var progressSection = document.getElementById('subscription-progress-section');
             var detailsSection = document.getElementById('subscription-info-details');
-            
+
             if (!container) return;
-            
+
             var configFileContent = document.querySelector('.config-file-content');
             if (configFileContent && configFileContent.classList.contains('empty-state')) {
                 return;
             }
-            
+
             container.style.display = 'flex';
-            
+
             if (progressSection) {
-                progressSection.style.display = 'none';
+                progressSection.innerHTML = '<div class="subscription-no-info"><%:No Sub Info Found%></div>';
+                progressSection.style.display = 'flex';
+                progressSection.className = 'subscription-progress';
             }
-            
+
             if (detailsSection) {
                 var fileModifyTimeElement = document.getElementById('file-modify-time');
-                
+
                 var hasFileInfo = false;
                 if (fileModifyTimeElement) {
                     var modifyTimeText = fileModifyTimeElement.textContent || '';
                     hasFileInfo = !modifyTimeText.includes('--');
                 }
-                
+
                 detailsSection.style.display = hasFileInfo ? 'flex' : 'none';
             }
         },
-        
-        showError: function() {
+
+        showLoading: function() {
             if (ConfigFileManager.configList.length === 0) {
                 return;
             }
-            
+
             var container = document.getElementById('subscription-info-display');
             var progressSection = document.getElementById('subscription-progress-section');
             var detailsSection = document.getElementById('subscription-info-details');
-            
+
             if (!container) return;
-            
+
             var configFileContent = document.querySelector('.config-file-content');
             if (configFileContent && configFileContent.classList.contains('empty-state')) {
                 return;
             }
-            
+
             container.style.display = 'flex';
-            
+
             if (progressSection) {
-                progressSection.style.display = 'none';
+                progressSection.innerHTML = '<div class="subscription-loading"><%:Collecting data...%></div>';
+                progressSection.style.display = 'flex';
+                progressSection.className = 'subscription-progress';
             }
+
             if (detailsSection) {
                 detailsSection.style.display = 'none';
             }
         },
-        
-        handleError: function() {
+
+        handleError: function(status) {
             if (this.retryCount >= this.maxRetries) {
-                this.showError();
                 this.retryCount = 0;
-                if (this.currentConfigFile) {
-                    localStorage.removeItem('sub_info_' + this.extractFilename(this.currentConfigFile));
+                if (this.currentConfigFile && status && status.providers) {
+                    localStorage.setItem('sub_info_' + filename, JSON.stringify(status));
+                }
+                if (!status.providers || status.providers.length === 0) {
+                    this.showNoInfo();
+                }
+                if (status.providers && status.providers.length > 0) {
+                    SubscriptionManager.displaySubscriptionInfo(status);
                 }
             } else {
                 this.retryCount++;
@@ -3053,32 +3537,32 @@
                 }, 5000);
             }
         },
-        
+
         extractFilename: function(path) {
             if (!path) return '';
             var parts = path.split('/');
             var filename = parts[parts.length - 1];
-            
+
             if (filename.endsWith('.yaml')) {
                 filename = filename.slice(0, -5);
             } else if (filename.endsWith('.yml')) {
                 filename = filename.slice(0, -4);
             }
-            
+
             return filename;
         },
-        
+
         startAutoUpdate: function() {
             if (this.updateTimer) {
                 clearTimeout(this.updateTimer);
             }
-            
+
             this.updateTimer = setTimeout(function() {
                 SubscriptionManager.getSubscriptionInfo();
                 SubscriptionManager.startAutoUpdate();
             }, 60000 * 15);
         },
-        
+
         stopAutoUpdate: function() {
             if (this.updateTimer) {
                 clearTimeout(this.updateTimer);
@@ -3087,10 +3571,384 @@
         }
     };
 
+    var SubscriptionUrlSetter = {
+        filename: '',
+
+        show: function(filename) {
+            this.filename = filename;
+            var overlay = document.getElementById('subscription-url-overlay');
+            var textarea = document.getElementById('subscription-url-textarea');
+            if (overlay && textarea) {
+                textarea.value = '';
+                overlay.style.display = 'flex';
+                textarea.focus();
+                this.bindEvents();
+                this.loadUrls();
+            }
+        },
+
+        hide: function() {
+            var overlay = document.getElementById('subscription-url-overlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+            this.unbindEvents();
+        },
+
+        bindEvents: function() {
+            var textarea = document.getElementById('subscription-url-textarea');
+            var overlay = document.getElementById('subscription-url-overlay');
+
+            if (textarea) {
+                textarea.addEventListener('keydown', this.handleKeyDown.bind(this));
+            }
+            if (overlay) {
+                overlay.addEventListener('click', this.handleOverlayClick.bind(this));
+            }
+        },
+
+        unbindEvents: function() {
+            var textarea = document.getElementById('subscription-url-textarea');
+            var overlay = document.getElementById('subscription-url-overlay');
+
+            if (textarea) {
+                textarea.removeEventListener('keydown', this.handleKeyDown.bind(this));
+            }
+            if (overlay) {
+                overlay.removeEventListener('click', this.handleOverlayClick.bind(this));
+            }
+        },
+
+        handleKeyDown: function(event) {
+            if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                this.submit();
+            } else if (event.key === 'Escape') {
+                this.hide();
+            }
+        },
+
+        handleOverlayClick: function(event) {
+            if (event.target.id === 'subscription-url-overlay') {
+                this.hide();
+            }
+        },
+
+        submit: function() {
+            var textarea = document.getElementById('subscription-url-textarea');
+            if (!textarea) return;
+
+            var urls = textarea.value.trim();
+
+            var urlList = urls.split('\n').map(function(url) {
+                return url.trim();
+            }).filter(function(url) {
+                return url !== '';
+            });
+
+            var newUrl = urlList.join('\n');
+
+            this.hide();
+
+            XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "set_subinfo_url")%>', {
+                filename: this.filename,
+                url: newUrl
+            }, function(x, status) {
+                if (x && x.status == 200 && status.info === "Success") {
+                    refreshSubscriptionInfo();
+                } else if (x && x.status == 200 && status.info === "Delete success") {
+                    refreshSubscriptionInfo();
+                } else {
+                    alert('<%:Specify subscribe infos sources url failed:%>\n' + (status.info || '<%:Unknown error%>'));
+                }
+            });
+        },
+
+        handleSubURL: function(urlresult) {
+            var textarea = document.getElementById('subscription-url-textarea');
+            if (!textarea) return;
+
+            var urls = '';
+            if (urlresult.type && urlresult.type === "multiple") {
+                for (var data in urlresult.providers) {
+                    urls += urlresult.providers[data].url + '#name=' + urlresult.providers[data].name + '\n';
+                }
+            }
+            if (urlresult.type && urlresult.type === "single") {
+                urls = urlresult.url;
+            }
+            textarea.value = urls;
+        },
+
+        loadUrls: function() {
+            var self = this;
+            var existingData = localStorage.getItem('sub_info_' + this.filename);
+            if (existingData) {
+                existingData = JSON.parse(existingData);
+                if (existingData.url_result) {
+                    this.handleSubURL(existingData.url_result);
+                    return;
+                }
+            };
+
+            XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "get_subscribe_info_data")%>', {
+                filename: this.filename
+            }, function(x, status) {
+                if (x && x.status == 200 && status) {
+                    self.handleSubURL(status);
+                }
+            });
+        }
+    };
+
+    var OverwriteSubscribeManager = {
+        container: null,
+        data: null,
+        isLoading: false,
+        _dragBound: false,
+        _isDragging: false,
+        _dragStartX: 0,
+        _dragStartScrollLeft: 0,
+        _touchIdentifier: null,
+
+        init: function() {
+            this.container = document.getElementById('subscription-overwrite-tags');
+            if (!this.container) return;
+            this.bindDragScroll();
+            this.load(false);
+        },
+
+        hasOverflow: function() {
+            if (!this.container) return false;
+            return this.container.scrollWidth > this.container.clientWidth + 1;
+        },
+
+        updateDragScrollState: function() {
+            if (!this.container) return;
+            if (this.hasOverflow()) {
+                this.container.classList.add('drag-scroll-enabled');
+            } else {
+                this.container.classList.remove('drag-scroll-enabled');
+                this.container.classList.remove('dragging');
+            }
+        },
+
+        bindDragScroll: function() {
+            if (!this.container || this._dragBound) {
+                return;
+            }
+
+            var self = this;
+
+            function endDrag() {
+                if (!self._isDragging) return;
+                self._isDragging = false;
+                self._touchIdentifier = null;
+                self.container.classList.remove('dragging');
+            }
+
+            this.container.addEventListener('mousedown', function(e) {
+                if (!self.hasOverflow()) {
+                    return;
+                }
+                self._isDragging = true;
+                self._dragStartX = e.pageX - self.container.offsetLeft;
+                self._dragStartScrollLeft = self.container.scrollLeft;
+                self.container.classList.add('dragging');
+                e.preventDefault();
+            });
+
+            this.container.addEventListener('mousemove', function(e) {
+                if (!self._isDragging) {
+                    return;
+                }
+                var x = e.pageX - self.container.offsetLeft;
+                var walk = (x - self._dragStartX) * 1.5;
+                self.container.scrollLeft = self._dragStartScrollLeft - walk;
+                e.preventDefault();
+            });
+
+            this.container.addEventListener('mouseleave', function() {
+                endDrag();
+            });
+
+            this.container.addEventListener('mouseup', function() {
+                endDrag();
+            });
+
+            this.container.addEventListener('touchstart', function(e) {
+                if (!self.hasOverflow() || !e.touches || e.touches.length !== 1) {
+                    return;
+                }
+                var touch = e.touches[0];
+                self._isDragging = true;
+                self._touchIdentifier = touch.identifier;
+                self._dragStartX = touch.pageX - self.container.offsetLeft;
+                self._dragStartScrollLeft = self.container.scrollLeft;
+                self.container.classList.add('dragging');
+            }, { passive: true });
+
+            this.container.addEventListener('touchmove', function(e) {
+                if (!self._isDragging || !e.touches || e.touches.length === 0) {
+                    return;
+                }
+
+                var touch = null;
+                for (var i = 0; i < e.touches.length; i++) {
+                    if (e.touches[i].identifier === self._touchIdentifier) {
+                        touch = e.touches[i];
+                        break;
+                    }
+                }
+                if (!touch) {
+                    return;
+                }
+
+                var x = touch.pageX - self.container.offsetLeft;
+                var walk = (x - self._dragStartX) * 1.5;
+                self.container.scrollLeft = self._dragStartScrollLeft - walk;
+                e.preventDefault();
+            }, { passive: false });
+
+            this.container.addEventListener('touchend', function() {
+                endDrag();
+            });
+
+            this.container.addEventListener('touchcancel', function() {
+                endDrag();
+            });
+
+            this.container.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+
+            this._dragBound = true;
+        },
+
+        load: function(force) {
+            if (!this.container || this.isLoading) {
+                return;
+            }
+
+            this.isLoading = true;
+            var self = this;
+
+            StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "overwrite_subscribe_info")%>', function(x, status) {
+                self.isLoading = false;
+                if (x && x.status == 200 && status && status.status === 'success' && status.data) {
+                    self.data = status.data;
+                    self.render(status.data);
+                } else {
+                    self.render(null);
+                }
+            }, !!force);
+        },
+
+        getTypeClass: function(type) {
+            var normalizedType = String(type || '').toLowerCase();
+            if (normalizedType === 'http') return 'type-http';
+            if (normalizedType === 'file') return 'type-file';
+            return 'type-unknown';
+        },
+
+        parseModuleConfigList: function(configValue) {
+            if (!Array.isArray(configValue)) {
+                return [];
+            }
+            return configValue.map(function(item) {
+                return String(item || '').trim();
+            }).filter(function(item) {
+                return !!item;
+            });
+        },
+
+        isModuleForCurrentConfig: function(moduleInfo, currentConfigPath) {
+            var configList = this.parseModuleConfigList(moduleInfo ? moduleInfo.config : null);
+            if (!configList.length) {
+                return true;
+            }
+
+            if (configList.indexOf('all') !== -1) {
+                return true;
+            }
+
+            var fullPath = String(currentConfigPath || '').trim();
+            if (!fullPath) {
+                return false;
+            }
+
+            return configList.indexOf(fullPath) !== -1;
+        },
+
+        getEnabledModules: function(data) {
+            if (!data || typeof data !== 'object') {
+                return [];
+            }
+
+            var currentConfigPath = ConfigFileManager.getCurrentConfig() || ConfigFileManager.getSelectedConfig();
+
+            var modules = [];
+            for (var moduleName in data) {
+                if (!Object.prototype.hasOwnProperty.call(data, moduleName)) {
+                    continue;
+                }
+
+                var moduleInfo = data[moduleName] || {};
+                if (parseInt(moduleInfo.enable, 10) === 1 && this.isModuleForCurrentConfig(moduleInfo, currentConfigPath)) {
+                    modules.push({
+                        name: moduleName,
+                        type: moduleInfo.type || 'unknown',
+                        order: parseInt(moduleInfo.order, 10) || 0
+                    });
+                }
+            }
+
+            modules.sort(function(a, b) {
+                if (a.order === b.order) {
+                    return String(a.name).localeCompare(String(b.name));
+                }
+                return a.order - b.order;
+            });
+
+            return modules;
+        },
+
+        render: function(data) {
+            if (!this.container) return;
+
+            var enabledModules = this.getEnabledModules(data);
+            this.container.innerHTML = '';
+
+            if (enabledModules.length === 0) {
+                this.container.style.display = 'none';
+                this.updateDragScrollState();
+                return;
+            }
+
+            for (var i = 0; i < enabledModules.length; i++) {
+                var moduleItem = enabledModules[i];
+                var tag = document.createElement('span');
+                tag.className = 'subscription-overwrite-tag ' + this.getTypeClass(moduleItem.type);
+                tag.title = moduleItem.name;
+                tag.textContent = moduleItem.name;
+                if (moduleItem.type == 'http') {
+                    tag.title += ' [<%:HTTP Module%>]';
+                } else if (moduleItem.type == 'file') {
+                    tag.title += ' [<%:File Module%>]';
+                } else {
+                    tag.title += ' [<%:Unknown%>]';
+                }
+                this.container.appendChild(tag);
+            }
+
+            this.container.style.display = 'flex';
+            this.updateDragScrollState();
+        }
+    };
+
     var LogManager = {
         isPolling: false,
         pollTimer: null,
-        maxPollTime: 15000,
+        maxPollTime: 60000,
         pollInterval: 1000,
         startTime: 0,
         lastLogContent: '',
@@ -3109,16 +3967,16 @@
 
             StateManager.clearCache('<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>');
 
-            if (DOMCache.oclog) {
+            if (DOMCache.oclog && initialMessage) {
                 DOMCache.oclog.style.display = 'inline-flex';
-                DOMCache.oclog.innerHTML = '<b style="color:var(--warning-color)">' + (initialMessage || '<%:Processing...%>') + '</b>';
+                DOMCache.oclog.innerHTML = '<b style="color:var(--tip-color)">' + initialMessage + '</b>';
             }
-            
+
             this.isPolling = true;
             this.startTime = Date.now();
             this.lastLogContent = '';
             this.retryCount = 0;
-            
+
             var self = this;
             setTimeout(function() {
                 if (self.isPolling) {
@@ -3126,7 +3984,7 @@
                 }
             }, 2000);
         },
-        
+
         stopLogDisplay: function() {
             this.isPolling = false;
             if (this.pollTimer) {
@@ -3143,15 +4001,15 @@
                 }, 1000);
             }
         },
-        
+
         pollLog: function() {
             if (!this.isPolling) return;
-            
+
             if (Date.now() - this.startTime > this.maxPollTime) {
                 this.stopLogDisplay();
                 return;
             }
-            
+
             var self = this;
             StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>', function(x, status) {
                 if (!self.isPolling) return;
@@ -3175,7 +4033,7 @@
                         }, 3000);
                         return;
                     }
-                    
+
                     if (logContent !== '') {
                         self.retryCount = 0;
                         self.scheduleNextPoll(self.pollInterval);
@@ -3208,77 +4066,66 @@
                 self.pollLog();
             }, delay);
         },
-        
+
         checkForErrors: function(log) {
             if (!log) return false;
-            if (log.match(/level=fatal|level=error|FTL \[Config]/)) {
+            if (log.match(/level=(fatal|error)/)) {
                 XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function(x) {});
-                
-                var errorMsg;
-                if (log.match(/level=(fatal|error)/)) {
-                    var msgParts = log.split('msg=');
-                    errorMsg = msgParts.length > 1 ? msgParts[1].replace(/"/g, '') : log;
-                } else { // FTL [Config]
-                    var ftlParts = log.split('FTL [Config] ');
-                    errorMsg = ftlParts.length > 1 ? ftlParts[1] : log;
-                }
-                
+
+                var msgParts = log.split('msg=');
+                var errorMsg = msgParts.length > 1 ? msgParts[1].replace(/"/g, '') : log;
+
                 setTimeout(function() {
                     alert('<%:OpenClash Start Failed%>:\n\n' + errorMsg);
                 }, 500);
-                
+
                 return true;
             }
             return false;
         },
-        
+
         displayLog: function(logContent) {
             if (!this.isPolling || !DOMCache.oclog) return;
-            
+
             var cleanLog = this.cleanLogContent(logContent);
             this.lastLogContent = cleanLog;
 
             var color = this.getLogColor(cleanLog);
             var displayText = this.formatLogText(cleanLog);
-            
+
+            DOMCache.oclog.style.display = 'inline-flex';
             DOMCache.oclog.innerHTML = '<b style="color:' + color + '">' + displayText + '</b>';
         },
-        
+
         cleanLogContent: function(content) {
             return content ? content.replace(/[\r\n]+/g, ' ').replace('##FINISH##', '').trim() : '';
         },
-        
+
         getLogColor: function(log) {
-            if (log.includes("Tip:") || log.includes("提示：")) {
-                return 'var(--warning-color)';
-            } else if (log.includes("Error:") || log.includes("错误：") || log.includes("level=error")) {
-                return 'var(--error-color)';
-            } else if (log.includes("Warning:") || log.includes("警告：") || log.includes("level=warning")) {
-                return 'var(--warning-log)';
-            } else if (log.includes("Watchdog:") || log.includes("守护程序：")) {
-                return 'var(--watch-log)';
-            } else if (log.match(/level=info|Success|Started|Ready/)) {
-                return 'var(--success-color)';
-            } else {
-                return 'var(--text-secondary)';
+            for (var levelKey in window.levelTranslations) {
+                var translatedText = '[' + window.levelTranslations[levelKey] + ']';
+                if (log.includes(translatedText)) {
+                    return "var(--" + levelKey + "-color)";
+                }
             }
+            return "var(--info-color)";
         },
-        
+
         formatLogText: function(log) {
             if (!log) return '<%:Processing...%>';
-            
+
             var cleanText = log.replace(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.\d]*Z?\s*/, '')
                             .replace(/^time="[^"]*"\s*/, '')
                             .replace(/^level=\w+\s*/, '')
                             .replace(/^msg="?([^"]*)"?\s*/, '$1');
-            
+
             if (cleanText.length > 60) {
                 cleanText = cleanText.substring(0, 57) + '...';
             }
-            
+
             return this.escapeHtml(cleanText) || '<%:Processing...%>';
         },
-        
+
         escapeHtml: function(text) {
             var div = document.createElement('div');
             div.textContent = text;
@@ -3292,14 +4139,14 @@
         retryCount: 0,
         maxRetries: 3,
         isEnabled: false,
-        
+
         start: function() {
             if (this.isEnabled) return;
             this.isEnabled = true;
             this.retryCount = 0;
             this.poll();
         },
-        
+
         stop: function() {
             this.isEnabled = false;
             if (this.pollTimer) {
@@ -3307,25 +4154,25 @@
                 this.pollTimer = null;
             }
         },
-        
+
         poll: function() {
             if (!this.isEnabled) return;
-            
+
             var self = this;
             StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "toolbar_show_sys")%>', function(x, status) {
                 if (x && x.status == 200 && x.responseText != "") {
                     self.retryCount = 0;
-                    var cpuColor = status.cpu <= 50 ? "var(--success-color)" : (status.cpu <= 80 ? "var(--warning-color)" : "var(--error-color)");
+                    var cpuColor = status.cpu <= 50 ? "var(--success-color)" : (status.cpu <= 80 ? "var(--tip-color)" : "var(--error-color)");
                     var cpuValue = status.cpu <= 100 ? status.cpu + " %" : "0 %";
                     document.getElementById("cpu_t").innerHTML = "<font style=\"color:"+cpuColor+"\">"+cpuValue+"</font>";
-                    
+
                     var loadValue = parseFloat(status.load_avg) || 0;
-                    var loadColor = loadValue <= 50 ? "var(--success-color)" : (loadValue <= 80 ? "var(--warning-color)" : "var(--error-color)");
+                    var loadColor = loadValue <= 50 ? "var(--success-color)" : (loadValue <= 80 ? "var(--tip-color)" : "var(--error-color)");
                     document.getElementById("load_a").innerHTML = "<font style=\"color:"+loadColor+"\">"+status.load_avg+" %</font>";
                 } else {
                     self.handleError();
                 }
-                
+
                 if (self.isEnabled) {
                     self.pollTimer = setTimeout(function() {
                         self.poll();
@@ -3333,17 +4180,17 @@
                 }
             }, true);
         },
-        
+
         handleError: function() {
             this.retryCount++;
-            
+
             if (this.retryCount >= this.maxRetries) {
                 document.getElementById("cpu_t").innerHTML = "<font style=\"color:var(--success-color)\">0 %</font>";
                 document.getElementById("load_a").innerHTML = "<font style=\"color:var(--success-color)\">0 %</font>";
                 this.retryCount = 0;
             }
         },
-        
+
         setPollInterval: function(interval) {
             this.pollInterval = interval;
         }
@@ -3355,14 +4202,14 @@
         retryCount: 0,
         maxRetries: 3,
         isEnabled: false,
-        
+
         start: function() {
             if (this.isEnabled) return;
             this.isEnabled = true;
             this.retryCount = 0;
             this.poll();
         },
-        
+
         stop: function() {
             this.isEnabled = false;
             if (this.pollTimer) {
@@ -3370,10 +4217,10 @@
                 this.pollTimer = null;
             }
         },
-        
+
         poll: function() {
             if (!this.isEnabled) return;
-            
+
             var self = this;
             StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "toolbar_show")%>', function(x, status) {
                 if (x && x.status == 200 && x.responseText != "") {
@@ -3382,7 +4229,7 @@
                 } else {
                     self.handleError();
                 }
-                
+
                 if (self.isEnabled) {
                     self.pollTimer = setTimeout(function() {
                         self.poll();
@@ -3390,7 +4237,7 @@
                 }
             }, true);
         },
-        
+
         updateNetworkStats: function(status) {
             var updates = [
                 {element: document.getElementById("upload_"), content: "<font style=\"color:var(--success-color)\">"+status.up+"</font>"},
@@ -3400,23 +4247,23 @@
                 {element: document.getElementById("mem_t"), content: "<font style=\"color:var(--success-color)\">"+status.mem+"</font>"},
                 {element: document.getElementById("connect_t"), content: "<font style=\"color:var(--success-color)\">"+status.connections+"</font>"}
             ];
-            
+
             if (!SystemStatusManager.isEnabled) {
-                var cpuColor = status.cpu <= 50 ? "var(--success-color)" : (status.cpu <= 80 ? "var(--warning-color)" : "var(--error-color)");
+                var cpuColor = status.cpu <= 50 ? "var(--success-color)" : (status.cpu <= 80 ? "var(--tip-color)" : "var(--error-color)");
                 var cpuValue = status.cpu <= 100 ? status.cpu + " %" : "0 %";
                 updates.push({element: document.getElementById("cpu_t"), content: "<font style=\"color:"+cpuColor+"\">"+cpuValue+"</font>"});
-                
+
                 var loadValue = parseFloat(status.load_avg) || 0;
-                var loadColor = loadValue <= 50 ? "var(--success-color)" : (loadValue <= 80 ? "var(--warning-color)" : "var(--error-color)");
+                var loadColor = loadValue <= 50 ? "var(--success-color)" : (loadValue <= 80 ? "var(--tip-color)" : "var(--error-color)");
                 updates.push({element: document.getElementById("load_a"), content: "<font style=\"color:"+loadColor+"\">"+status.load_avg+" %</font>"});
             }
-            
+
             StateManager.batchUpdateDOM(updates);
         },
-        
+
         handleError: function() {
             this.retryCount++;
-            
+
             if (this.retryCount >= this.maxRetries) {
                 var fallbackUpdates = [
                     {element: document.getElementById("upload_"), content: "<font style=\"color:var(--success-color)\">0 B/S</font>"},
@@ -3426,17 +4273,17 @@
                     {element: document.getElementById("mem_t"), content: "<font style=\"color:var(--success-color)\">0 KB</font>"},
                     {element: document.getElementById("connect_t"), content: "<font style=\"color:var(--success-color)\">0</font>"}
                 ];
-                
+
                 if (!SystemStatusManager.isEnabled) {
                     fallbackUpdates.push({element: document.getElementById("cpu_t"), content: "<font style=\"color:var(--success-color)\">0 %</font>"});
                     fallbackUpdates.push({element: document.getElementById("load_a"), content: "<font style=\"color:var(--success-color)\">0 %</font>"});
                 }
-                
+
                 StateManager.batchUpdateDOM(fallbackUpdates);
                 this.retryCount = 0;
             }
         },
-        
+
         setPollInterval: function(interval) {
             this.pollInterval = interval;
         }
@@ -3445,18 +4292,18 @@
     var SettingsManager = {
         pendingOperations: new Set(),
         pausedPolls: new Set(),
-        
+
         pausePoll: function(pollName, duration) {
             this.pausedPolls.add(pollName);
             setTimeout(() => {
                 this.pausedPolls.delete(pollName);
             }, duration || 3000);
         },
-        
+
         isPollPaused: function(pollName) {
             return this.pausedPolls.has(pollName);
         },
-        
+
         updateUIState: function(setting, value) {
             setTimeout(() => {
                 function setCheckedAndDisabled(elements, checkedIndex) {
@@ -3532,7 +4379,7 @@
                 }
             }, 10);
         },
-        
+
         switchSetting: function(setting, value, endpoint, additionalParams) {
             var operationKey = setting + '_' + value;
 
@@ -3627,7 +4474,7 @@
 
             return false;
         },
-        
+
         getErrorMessage: function(setting) {
             var messages = {
                 'meta_sniffer': '<%:Sniffer setting failed%>',
@@ -3649,7 +4496,12 @@
         DarkModeDetector.init();
         ConfigFileManager.init();
 
+        window.addEventListener('oc-overwrite-updated', function() {
+            OverwriteSubscribeManager.load(true);
+        });
+
         setTimeout(function() {
+            OverwriteSubscribeManager.init();
             SubscriptionManager.init();
         }, 300);
 
@@ -3665,20 +4517,20 @@
     XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "openclash", "status")%>', null, function(x, status) {
         if (x && x.status == 200) {
             var updates = [];
-        
+
             if (!pluginToggleUserAction) {
                 updates.push({
                     element: DOMCache.clash,
                     content: status.clash ? '<b style=color:var(--success-color)>' + status.core_type +'&nbsp;<%:Running%></b>' : '<b style=color:var(--error-color)><%:Not Running%></b>'
                 });
-                
+
                 updatePluginToggleState(status.clash);
             }
 
 			get_run_mode();
             get_rule_mode();
             get_oc_settings();
-            
+
             var webContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:Yacd%>" onclick="return ycad_dashboard(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:Yacd%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
             updates.push({element: DOMCache.web, content: webContent});
 
@@ -3691,14 +4543,13 @@
             var webzContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:Zashboard%>" onclick="return net_zashboard(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:Zashboard%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
             updates.push({element: DOMCache.webz, content: webzContent});
 
-
             var closeConnContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:Close Connect%>" onclick="return b_close_all_connection(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:Close Connect%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
             updates.push({element: document.getElementById('_close_all_connection_btn'), content: closeConnContent});
 
             var reloadFwContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:Reload Firewall%>" onclick="return b_reload_firewall(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:Reload Firewall%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
             updates.push({element: document.getElementById('_reload_firewall_btn'), content: reloadFwContent});
 
-            var flushCacheContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:Flush DNS Cache%>" onclick="return b_flush_dns_cache(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:Flush DNS Cache%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
+            var flushCacheContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:Flush DNS%>" onclick="return b_flush_dns_cache(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:Flush DNS Cache%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
             updates.push({element: document.getElementById('_flush_dns_cache_btn'), content: flushCacheContent});
 
             var oneKeyUpdateContent = '<input type="button" class="dashboard-btn" value="<%:Check Update%>" onclick="return all_one_key_update(this)"/>';
@@ -3706,11 +4557,27 @@
 
             StateManager.batchUpdateDOM(updates);
 
+            if (!status.yacd) {
+                DOMCache.web.classList.add('hidden');
+            }
+
+            if (!status.dashboard) {
+                DOMCache.webo.classList.add('hidden');
+            }
+
+            if (!status.metacubexd) {
+                DOMCache.webm.classList.add('hidden');
+            }
+
+            if (!status.zashboard) {
+                DOMCache.webz.classList.add('hidden');
+            }
+
             StateManager.current_status = status;
-            
+
             if (status.daip) {
                 var daipContent, dapoContent;
-                
+
                 if (status.daip && window.location.hostname == status.daip) {
                     dapoContent = status.cn_port ? ":"+status.cn_port : "";
                     daipContent = status.daip ? "<b style=color:var(--success-color)>"+status.daip+dapoContent+"</b>" : "<b style=color:var(--error-color)>"+"<%:Not Set%>"+"</b>";
@@ -3721,7 +4588,7 @@
                     dapoContent = status.cn_port ? ":"+status.cn_port : "";
                     daipContent = status.daip ? "<b style=color:var(--success-color)>"+status.daip+dapoContent+"</b>" : "<b style=color:var(--error-color)>"+"<%:Not Set%>"+"</b>";
                 }
-                
+
                 DOMCache.daip.innerHTML = daipContent;   
 
                 StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "proxy_info")%>', function(x, proxy_info) {
@@ -3745,22 +4612,16 @@
                 DOMCache.copy_mix_secret.style.display = "none";
                 DOMCache.copy_pac_config.style.display = "none";
             }
-            
+
             if (status.clash && status.daip) {
                 if (!WSManager.hasActiveConnections()) {
-                    if (!WSManager._ws_error || WSManager._ws_retry < 3) {
-                        if (initializeWebSocketConnections(status)) {
-                            WSManager._ws_retry++;
-                        }
-                    } else {
-                        WSManager.enableFallbackMode();
-                    }
+                    initializeWebSocketConnections(status);
                 } else {
-                    if (NetworkStatsManager && NetworkStatsManager.isEnabled) {
+                    if (NetworkStatsManager.isEnabled) {
                         NetworkStatsManager.stop();
                     }
-                    
-                    if (SystemStatusManager && !SystemStatusManager.isEnabled) {
+
+                    if (!SystemStatusManager.isEnabled) {
                         SystemStatusManager.start();
                     }
                 }
@@ -3783,10 +4644,10 @@
         if (!status || !status.clash || !status.daip) {
             return false;
         }
-        
+
         var protocol = getWebSocketProtocol(status);
         var token = status.dase;
-        
+
         var connections = [
             {
                 type: 'traffic',
@@ -3804,19 +4665,19 @@
                 handler: ws_mmessage
             }
         ];
-        
+
         connections.forEach(function(conn) {
             var url = protocol + conn.endpoint + (token ? '?token=' + token : '');
             WSManager.createConnection(conn.type, url, conn.handler);
         });
-        
+
         return true;
     }
 
     function getWebSocketProtocol(status) {
         var protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
         var host, port;
-        
+
         if (status.daip && window.location.hostname === status.daip) {
             host = status.daip;
             port = status.cn_port;
@@ -3828,36 +4689,36 @@
             host = status.daip;
             port = status.cn_port;
         }
-        
+
         return protocol + host + ":" + port;
     }
 
     function loadAnnouncement() {
         var userLang = navigator.language || navigator.userLanguage; 
         var isChineseUser = userLang.indexOf('zh') === 0;
-        
+
         var tips = [
-            '<%:Tip: You can modify the profile on the profile page (for content that is not taken over)%>',
-            '<%:Tip: do not write configuration files? Try to create one click on the server page%>',
-            '<%:Tip: some website are abnormal? Try switching modes or using third-party rules%>',
-            '<%:Tip: using the fake IP mode can get a faster access experience%>',
-            '<%:Tip: the nameserver group must have at least one server set when using custom DNS%>',
-            '<%:Tip: after started, please wait patiently until the connection is normal%>',
-            '<%:Tip: if you don not use IPv6, please turn off the DHCP service of IPv6, otherwise the connection will be abnormal%>',
-            '<%:Tip: you can update the version in the settings page%>',
+            '<%:You can modify the profile on the profile page (for content that is not taken over)%>',
+            '<%:do not write configuration files? Try to create one click on the server page%>',
+            '<%:some website are abnormal? Try switching modes or using third-party rules%>',
+            '<%:using the fake IP mode can get a faster access experience%>',
+            '<%:the nameserver group must have at least one server set when using custom DNS%>',
+            '<%:after started, please wait patiently until the connection is normal%>',
+            '<%:if you don not use IPv6, please turn off the DHCP service of IPv6, otherwise the connection will be abnormal%>',
+            '<%:you can update the version in the settings page%>',
             '<%:Note: It is not recommended to enable IPv6 and related services for routing. Most of the network connection problems reported so far are related to it%>',
             '<%:Note: Turning on secure DNS in the browser will cause abnormal shunting, please be careful to turn it off%>',
             '<%:Note: Some software will modify the device HOSTS, which will cause abnormal shunt, please pay attention to check%>',
             '<%:Note: The default proxy routes local traffic, BT, PT download, etc., please use Redir-Host mode as much as possible and pay attention to traffic avoidance%>'
         ];
-        
+
         function calculateAnimationDuration(bannerWidth, contentWidth) {
             var screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
             var refreshRate = window.screen && window.screen.refreshRate ? window.screen.refreshRate : 60;
             if (refreshRate <= 0) refreshRate = 60;
-            
+
             if (refreshRate > 480) refreshRate = 480;
-            
+
             var baseDuration;
             if (screenWidth <= 575) {
                 baseDuration = 12000;
@@ -3868,27 +4729,27 @@
             } else {
                 baseDuration = 9000;
             }
-            
+
             var refreshRateMultiplier = 1;
             if (refreshRate > 60) {
                 refreshRateMultiplier = 1 + (refreshRate - 60) / 240;
             }
-            
+
             var duration = baseDuration * refreshRateMultiplier;
-            
+
             return Math.max(4000, Math.min(duration, 18000));
         }
-        
+
         function updateScrollAnimation(banner, content, duration) {
             var bannerWidth = banner.offsetWidth;
             var contentWidth = content.offsetWidth;
             var scrollDistance = -(contentWidth + bannerWidth);
-            
+
             banner.style.setProperty('--scroll-distance', scrollDistance + 'px');
-            
+
             content.style.animationDuration = duration + 'ms';
         }
-        
+
         function getRandomTips(count) {
             var shuffled = tips.slice();
             for (var i = shuffled.length - 1; i > 0; i--) {
@@ -3899,11 +4760,11 @@
             }
             return shuffled.slice(0, count);
         }
-        
+
         function updateIcon(isRandomTips) {
             var megaphoneElement = document.getElementById('megaphone');
             if (!megaphoneElement) return;
-            
+
             if (isRandomTips) {
                 megaphoneElement.innerHTML = '<path d="M176,232a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,232Zm40-128a87.55,87.55,0,0,1-33.64,69.21A16.24,16.24,0,0,0,176,186v6a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16v-6a16,16,0,0,0-6.23-12.66A87.59,87.59,0,0,1,40,104.49C39.74,56.83,78.26,17.14,125.88,16A88,88,0,0,1,216,104Zm-16,0a72,72,0,0,0-73.74-72c-39,.92-70.47,33.39-70.26,72.39a71.65,71.65,0,0,0,27.64,56.3A32,32,0,0,1,96,186v6h64v-6a32.15,32.15,0,0,1,12.47-25.35A71.65,71.65,0,0,0,200,104Zm-16.11-9.34a57.6,57.6,0,0,0-46.56-46.55,8,8,0,0,0-2.66,15.78c16.57,2.79,30.63,16.85,33.44,33.45A8,8,0,0,0,176,104a9,9,0,0,0,1.35-.11A8,8,0,0,0,183.89,94.66Z" stroke-width="2"></path>';
                 megaphoneElement.setAttribute('viewBox', '0 0 256 256');
@@ -3913,22 +4774,22 @@
                 megaphoneElement.setAttribute('viewBox', '0 0 256 256');
             }
         }
-        
+
         StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "announcement")%>', function(x, status) {
             var banner = document.getElementById('announcement-banner');
             var content = document.getElementById('announcement-content');
             var announcements = [];
             var isRandomTips = false;
-            
+
             if (!banner || !content) return;
-            
+
             if (x && x.status == 200 && status.content) {
                 try {
                     var contentData = status.content;
                     if (typeof contentData === 'string') {
                         contentData = JSON.parse(contentData);
                     }
-                    
+
                     if (Array.isArray(contentData)) {
                         if (contentData.length > 0 && (contentData[0].zh || contentData[0].en)) {
                             contentData.forEach(function(item) {
@@ -3954,20 +4815,20 @@
                     }
                 }
             }
-            
+
             if (announcements.length === 0) {
                 announcements = getRandomTips(3);
                 isRandomTips = true;
             }
-            
+
             updateIcon(isRandomTips);
             banner.style.display = 'block';
-            
+
             var currentIndex = 0;
             var isHovered = false;
             var pauseTimeout = null;
             var nextAnimationTimeout = null;
-            
+
             banner.addEventListener('mouseenter', function() { 
                 isHovered = true;
                 content.classList.add('paused');
@@ -3976,7 +4837,7 @@
                 isHovered = false;
                 content.classList.remove('paused');
             });
-            
+
             var resizeTimeout;
             window.addEventListener('resize', function() {
                 clearTimeout(resizeTimeout);
@@ -3987,50 +4848,50 @@
                     }
                 }, 250);
             });
-            
+
             function startScrollAnimation() {
                 if (nextAnimationTimeout) {
                     clearTimeout(nextAnimationTimeout);
                     nextAnimationTimeout = null;
                 }
-                
+
                 content.textContent = announcements[currentIndex];
-                
+
                 setTimeout(function() {
                     var duration = calculateAnimationDuration(banner.offsetWidth, content.offsetWidth);
                     updateScrollAnimation(banner, content, duration);
-                    
+
                     content.classList.remove('scrolling');
                     content.offsetHeight;
                     content.classList.add('scrolling');
-                    
+
                     var onAnimationEnd = function(e) {
                         if (e.target === content && e.animationName === 'announceScroll') {
                             content.removeEventListener('animationend', onAnimationEnd);
-                            
+
                             pauseTimeout = setTimeout(function() {
                                 if (!isHovered) {
                                     currentIndex = (currentIndex + 1) % announcements.length;
-                                    
+
                                     if (isRandomTips && currentIndex === 0) {
                                         announcements = getRandomTips(3);
                                     }
-                                    
+
                                     startScrollAnimation();
                                 }
                             }, 2000);
                         }
                     };
-                    
+
                     content.addEventListener('animationend', onAnimationEnd);
-                    
+
                 }, 50);
             }
-            
+
             setTimeout(function() {
                 startScrollAnimation();
             }, 300);
-            
+
             window.addEventListener('beforeunload', function() {
                 if (pauseTimeout) clearTimeout(pauseTimeout);
                 if (nextAnimationTimeout) clearTimeout(nextAnimationTimeout);
@@ -4042,7 +4903,7 @@
         if (SettingsManager.isPollPaused('rule_mode')) {
             return;
         }
-        
+
         StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "rule_mode")%>', function(x, status) {
             if (x && x.status == 200 && status.mode != "") {
                 if (!SettingsManager.pendingOperations.has('rule_mode_' + status.mode)) {
@@ -4064,12 +4925,12 @@
             '<%=luci.dispatcher.build_url("admin", "services", "openclash", "switch_rule_mode")%>'
         );
     }
-    
+
     function get_run_mode() {
         if (SettingsManager.isPollPaused('run_mode')) {
             return;
         }
-        
+
         StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "get_run_mode")%>', function(x, status) {
             if (x && x.status == 200 && status.mode) {
                 if (status.mode == "fake-ip" || status.mode == "fake-ip-tun" || status.mode == "fake-ip-mix") {
@@ -4079,10 +4940,10 @@
                     DOMCache.mode.innerHTML = "<b style=color:var(--success-color)><%:Redir-Host%></b>";
                     DOMCache.radio_run_normal.innerHTML = "<%:Compat%>";
                 }
-                
+
                 var expectedValue = status["mode"].split("-")[2] == undefined ? "" : ("-" + status["mode"].split("-")[2]);
                 var operationKey = 'run_mode_' + status.mode;
-                
+
                 if (!SettingsManager.pendingOperations.has(operationKey)) {
                     for (var i = 0; i < DOMCache.radio_ru.length; i++) {
                         if (DOMCache.radio_ru[i].value == expectedValue && !DOMCache.radio_ru[i].checked) {
@@ -4109,12 +4970,6 @@
             window.location.href = url;
         }
     }
-     
-    function ws_terror() {
-        WSManager._ws_error = true;
-        
-        NetworkStatsManager.start();
-    }
 
     function ws_tmessage(event) {
         var dataObj = event && event.data !== undefined ? event.data : event;
@@ -4133,7 +4988,7 @@
         uploadElement.innerHTML = data.up ? "<font style=\"color:var(--success-color)\">"+bytesToSize(data.up)+"/S</font>" : "<font style=\"color:var(--success-color)\">0 B/S</font>";
         downloadElement.innerHTML = data.down ? "<font style=\"color:var(--success-color)\">"+bytesToSize(data.down)+"/S</font>" : "<font style=\"color:var(--success-color)\">0 B/S</font>";
     }
-    
+
     function ws_cmessage(event) {
         var dataObj = event && event.data !== undefined ? event.data : event;
         var data;
@@ -4203,14 +5058,14 @@
             return false; 
         };
     }
-      
+
     var all_one_key_update = debounceButton(function(btn) {
         btn.value = '<%:Check Update%>';
         btn.disabled = false;
         select_git_cdn();
         return false;
     });
-    
+
     var b_flush_dns_cache = debounceButton(function(btn) {
         btn.disabled = true;
         btn.value = '<%:Flushing...%> ';
@@ -4224,7 +5079,7 @@
         btn.disabled = false;
         return false;
     });
-    
+
     var b_reload_firewall = debounceButton(function(btn) {
         btn.disabled = true;
         btn.value = '<%:Reloading...%>';
@@ -4245,7 +5100,7 @@
         });
         return false;
     });
-        
+
     function net_zashboard(btn) {
         if (StateManager.current_status) {
             var status = StateManager.current_status;
@@ -4320,7 +5175,7 @@
         winOpen(url1);
         return false;
     }
-    
+
     function net_dashboard(btn) {
         if (StateManager.current_status) {
             var status = StateManager.current_status;
@@ -4345,12 +5200,12 @@
         winOpen(url2);
         return false;
     }
-    
+
     function homepage() {
         url3 = 'https://github.com/vernesong/OpenClash';
         winOpen(url3);
     }
-    
+
     function gitbookpage() {
         url8 = 'https://wiki.metacubex.one';
         winOpen(url8);
@@ -4360,12 +5215,12 @@
         url5 = 'https://github.com/vernesong/OpenClash/wiki';
         winOpen(url5);
     }
-    
+
     function telegrampage() {
-        url6 = 'https://t.me/ctcgfw_openwrt_discuss';
+        url6 = 'https://t.me/openclash_group';
         winOpen(url6);
     }
-    
+
     function sponsorpage() {
         url7 = 'https://ko-fi.com/vernesong';
         winOpen(url7);
@@ -4381,11 +5236,11 @@
             if (!v1 || !v2) return 0;
             var ver1 = v1.replace(/^v/, '').split('.');
             var ver2 = v2.replace(/^v/, '').split('.');
-            
+
             var maxLen = Math.max(ver1.length, ver2.length);
             while (ver1.length < maxLen) ver1.push('0');
             while (ver2.length < maxLen) ver2.push('0');
-            
+
             for (var i = 0; i < maxLen; i++) {
                 var num1 = parseInt(ver1[i], 10) || 0;
                 var num2 = parseInt(ver2[i], 10) || 0;
@@ -4404,7 +5259,7 @@
                     if (status.corelv && status.corelv !== "" && status.corelv !== "loading..." && status.corelv !== status.coremetacv) {
                         hasUpdate = true;
                     }
-                    
+
                     DOMCache.core_version_text.textContent = coreVersionText;
                     if (DOMCache.core_version_text.scrollWidth > DOMCache.core_version_text.clientWidth) {
                         DOMCache.core_version_text.title = coreVersionText;
@@ -4412,12 +5267,12 @@
                         DOMCache.core_version_text.title = '';
                     }
                     DOMCache.core_version_display.style.display = 'flex';
-                    
+
                     var existingDot = DOMCache.core_version_display.querySelector('.update-dot');
                     if (existingDot) {
                         existingDot.remove();
                     }
-                    
+
                     if (hasUpdate) {
                         var updateDot = document.createElement('span');
                         updateDot.className = 'update-dot';
@@ -4431,17 +5286,17 @@
                     DOMCache.core_version_display.style.display = 'none';
                     DOMCache.core_version_display.title = '';
                 }
-                
+
                 if (status.opcv && status.opcv !== "0") {
                     var pluginVersionText = status.opcv;
                     var hasUpdate = false;
-                    
+
                     if (status.oplv && status.oplv !== "" && status.oplv !== "loading...") {
                         if (compareVersions(status.oplv, status.opcv) > 0) {
                             hasUpdate = true;
                         }
                     }
-                    
+
                     DOMCache.plugin_version_text.textContent = pluginVersionText;
                     if (DOMCache.plugin_version_text.scrollWidth > DOMCache.plugin_version_text.clientWidth) {
                         DOMCache.plugin_version_text.title = pluginVersionText;
@@ -4449,12 +5304,12 @@
                         DOMCache.plugin_version_text.title = '';
                     }
                     DOMCache.plugin_version_display.style.display = 'flex';
-                    
+
                     var existingDot = DOMCache.plugin_version_display.querySelector('.update-dot');
                     if (existingDot) {
                         existingDot.remove();
                     }
-                    
+
                     if (hasUpdate) {
                         var updateDot = document.createElement('span');
                         updateDot.className = 'update-dot';
@@ -4475,7 +5330,7 @@
     function logo_error(imgobj, imgSrc) {
         imgobj.src = imgSrc;
     }
-    
+
     function imgerrorfuns(imgobj, imgSrc) {
         setTimeout(function() {
             imgobj.src = imgSrc;
@@ -4509,19 +5364,39 @@
     }
 
     function copyAddress() {
-        var status = StateManager.current_status;
-        var address;
-        
-        if (status.daip && window.location.hostname == status.daip) {
-            address = 'http://' + status.daip + ':' + (status.cn_port || '9090') + '/ui/zashboard/#/setup?hostname=' + status.daip + '&port=' + (status.cn_port || '9090') + (status.dase ? '&secret=' + status.dase : '');
-        } else if (status.daip && window.location.hostname != status.daip && status.db_foward_domain && status.db_foward_port) {
-            var ui_proto = status.db_forward_ssl == 0 ? 'http://' : 'https://';
-            address = ui_proto + status.db_foward_domain + ':' + status.db_foward_port + '/ui/zashboard/#/setup?hostname=' + status.db_foward_domain + '&port=' + status.db_foward_port + (status.dase ? '&secret=' + status.dase : '');
-        } else {
-            address = 'http://' + (status.daip || 'unknown') + ':' + (status.cn_port || '9090') + '/ui/zashboard/#/';
-        }
-        
-        copyToClipboard(address, '<%:Control panel address copied:%> ');
+        XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "dashboard_type")%>', null, function(x, status) {
+            if (x && x.status == 200) {
+                var panel = status.default_dashboard;
+                if (panel && StateManager.current_status[panel]) {
+                    var url;
+                    var currentStatus = StateManager.current_status;
+                    if (currentStatus.daip && window.location.hostname == currentStatus.daip) {
+                        url = 'http://' + window.location.hostname + ':' + currentStatus.cn_port + '/ui/' + panel;
+                    } else if (currentStatus.daip && window.location.hostname != currentStatus.daip && currentStatus.db_foward_domain && currentStatus.db_foward_port) {
+                        var ui_proto = currentStatus.db_forward_ssl == 0 ? 'http://' : 'https://';
+                        url = ui_proto + currentStatus.db_foward_domain + ':' + currentStatus.db_foward_port + '/ui/' + panel;
+                    } else {
+                        url = 'http://' + window.location.hostname + ':' + currentStatus.cn_port + '/ui/' + panel;
+                    }
+
+                    if (panel === 'zashboard' || panel === 'metacubexd') {
+                        url += '/#/setup?hostname=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? window.location.hostname : (currentStatus.db_foward_domain || window.location.hostname)) + '&port=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? currentStatus.cn_port : (currentStatus.db_foward_port || currentStatus.cn_port)) + (currentStatus.dase ? '&secret=' + currentStatus.dase : '');
+                    } else if (panel === 'yacd') {
+                        url += '/?hostname=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? window.location.hostname : (currentStatus.db_foward_domain || window.location.hostname)) + '&port=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? currentStatus.cn_port : (currentStatus.db_foward_port || currentStatus.cn_port)) + (currentStatus.dase ? '&secret=' + currentStatus.dase : '');
+                    } else if (panel === 'dashboard') {
+                        url += '/#/?host=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? window.location.hostname : (currentStatus.db_foward_domain || window.location.hostname)) + '&port=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? currentStatus.cn_port : (currentStatus.db_foward_port || currentStatus.cn_port)) + (currentStatus.dase ? '&secret=' + currentStatus.dase : '');
+                    }
+
+                    copyToClipboard(url, '<%:Control panel address copied:%> ');
+                } else {
+                    var fallbackUrl = 'http://' + (StateManager.current_status.daip || 'unknown') + ':' + (StateManager.current_status.cn_port || '9090') + '/ui/zashboard/#/';
+                    copyToClipboard(fallbackUrl, '<%:Control panel address copied:%> ');
+                }
+            } else {
+                var fallbackUrl = 'http://' + (StateManager.current_status.daip || 'unknown') + ':' + (StateManager.current_status.cn_port || '9090') + '/ui/zashboard/#/';
+                copyToClipboard(fallbackUrl, '<%:Control panel address copied:%> ');
+            }
+        });
         return false;
     }
 
@@ -4554,6 +5429,10 @@
             var mixPort = StateManager.cached_proxy_info.mixed_port || '7893';
             var proxyIp = StateManager.current_status.daip;
             var proxyText = proxyIp + ':' + mixPort;
+            if (StateManager.cached_proxy_info.auth_user && StateManager.cached_proxy_info.auth_pass) {
+                proxyText = StateManager.cached_proxy_info.auth_user + ':' + StateManager.cached_proxy_info.auth_pass + '@' + proxyText;
+            }
+            proxyText = 'http://' + proxyText;
             copyToClipboard(proxyText, '<%:Mix proxy address copied:%> ');
         } else {
             alert('<%:Proxy info not available, please try again later%>');
@@ -4565,19 +5444,19 @@
         if (SettingsManager.isPollPaused('oc_settings')) {
             return;
         }
-        
+
         StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "oc_settings")%>', function(x, info) {
             if (x && x.status == 200) {
                 if (!SettingsManager.pendingOperations.has('meta_sniffer_' + info.meta_sniffer)) {
                     DOMCache.meta_sniffer_on.checked = info.meta_sniffer == "1";
                     DOMCache.meta_sniffer_off.checked = info.meta_sniffer != "1";
                 }
-                
+
                 if (!SettingsManager.pendingOperations.has('respect_rules_' + info.respect_rules)) {
                     DOMCache.respect_rules_on.checked = info.respect_rules == "1";
                     DOMCache.respect_rules_off.checked = info.respect_rules != "1";
                 }
-                
+
                 if (!SettingsManager.pendingOperations.has('oversea_' + info.oversea)) {
                     if (info.oversea == "0") {
                         DOMCache.oc_setting_oversea_0.checked = true;
@@ -4638,7 +5517,7 @@
                 port: window.location.port,
                 href: window.location.href
             };
-            
+
             XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "generate_pac")%>', {
                 client_protocol: currentUrl.protocol.replace(':', ''),
                 client_hostname: currentUrl.hostname,
@@ -4647,13 +5526,8 @@
                 client_href: currentUrl.href
             }, function(x, data) {
                 if (x && x.status == 200 && data.pac_url) {
-                    if (data.error && data.error.indexOf("warning:") === 0) {
-                        var warningMsg = data.error.replace("warning: ", "");
-                        var warningTranslations = {
-                            'No authentication configured, please be aware of the risk of information leakage!': '<%:No authentication configured, please be aware of the risk of information leakage!%>'
-                        };
-                        var translatedWarning = warningTranslations[warningMsg] || warningMsg;
-                        alert('<%:Warning:%> ' + translatedWarning);
+                    if (data.error && data.error !== "") {
+                        alert(data.error);
                     }
                     copyToClipboard(data.pac_url, '<%:PAC file URL copied:%> ');
                 } else if (data.error) {
@@ -4681,15 +5555,15 @@
         textArea.style.left = "0";
         textArea.style.position = "fixed";
         textArea.style.opacity = "0";
-        
+
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        
+
         try {
             var successful = document.execCommand('copy');
             document.body.removeChild(textArea);
-            
+
             if (successful) {
                 prompt(successMessage, text);
             } else {
@@ -4703,7 +5577,7 @@
 
     function togglePlugin(toggleElement) {
         var isEnabled = toggleElement.checked;
-        
+
         if (isEnabled) {
             var currentConfig = ConfigFileManager.getCurrentConfig() || ConfigFileManager.getSelectedConfig();
             if (!currentConfig) {
@@ -4717,29 +5591,29 @@
         pluginToggleUserAction = true;
         var action = isEnabled ? 'start' : 'stop';
         var initialMessage = isEnabled ? '<%:Starting...%>' : '<%:Stopping...%>';
-        
+
         LogManager.startLogDisplay(initialMessage);
-        
+
         var requestParams = { action: action };
-        
+
         if (isEnabled) {
             var currentConfig = ConfigFileManager.getCurrentConfig();
             var selectedConfig = ConfigFileManager.getSelectedConfig();
-            
+
             if (!currentConfig && selectedConfig) {
                 requestParams.config_file = configFileName;
             }
         }
-        
+
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "action")%>', requestParams, function(x, status) {
             if (x && x.status == 200) {
                 setTimeout(function() {
                     pluginToggleUserAction = false;
                     updatePluginToggleState(StateManager.current_status.clash || false);
-                }, 3000);
+                }, 2000);
             } else {
                 toggleElement.checked = !isEnabled;
-                
+
                 var errorMessage = isEnabled ? 
                     '<%:Failed to start OpenClash%>' : 
                     '<%:Failed to stop OpenClash%>';
@@ -4748,7 +5622,7 @@
                 if (DOMCache.clash) {
                     DOMCache.clash.innerHTML = '<b style="color:var(--error-color)"><%:Operation Failed%></b>';
                 }
-                
+
                 pluginToggleUserAction = false;
             }
             toggleElement.disabled = false;
@@ -4759,22 +5633,22 @@
         if (pluginToggleUserAction) {
             return;
         }
-        
+
         var toggleElement = document.getElementById('plugin_toggle');
         if (toggleElement) {
             toggleElement.checked = isRunning;
             toggleElement.disabled = false;
-            
+
             if (DOMCache.clash && StateManager.current_status) {
                 DOMCache.clash.innerHTML = isRunning ? 
                     '<b style=color:var(--success-color)>' + StateManager.current_status.core_type +'&nbsp;<%:Running%></b>' : 
                     '<b style=color:var(--error-color)><%:Not Running%></b>';
             }
-            
+
             if (!isRunning && StateManager.current_status && !StateManager.current_status.clash) {
                 setTimeout(function() {
                     updatePluginToggleState(StateManager.current_status.clash || false);
-                }, 3000);
+                }, 2000);
             }
         }
     }
@@ -4785,11 +5659,11 @@
             alert('<%:Please select a config file first%>');
             return false;
         }
-        
+
         pluginToggleUserAction = true;
-        
+
         LogManager.startLogDisplay('<%:Switching Config...%>');
-        
+
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "switch_config")%>', {
             config_file: currentConfig
         }, function(x, status) {
@@ -4798,28 +5672,28 @@
                 setTimeout(function() {
                     pluginToggleUserAction = false;
                     updatePluginToggleState(StateManager.current_status.clash || false);
-                }, 4000);
+                }, 2000);
             } else {
                 alert('<%:Failed to switch config file:%> ' + (status.message || '<%:Unknown error%>'));
-                
+
                 if (DOMCache.oclog) {
                     DOMCache.oclog.innerHTML = '<b style="color:var(--error-color)"><%:Switch Failed%></b>';
                 }
-                
+
                 pluginToggleUserAction = false;
             }
         });
 
         return false;
     }
-    
+
     function updateConfig() {
         var currentConfig = ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
             alert('<%:Please select a config file first%>');
             return false;
         }
-        
+
         var filename = SubscriptionManager.extractFilename(currentConfig);
         if (!filename) {
             alert('<%:Invalid config file selected%>');
@@ -4827,7 +5701,7 @@
         }
 
         pluginToggleUserAction = true;
-        
+
         LogManager.startLogDisplay('<%:Updating Config...%>');
 
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "update_config")%>', {
@@ -4836,30 +5710,30 @@
             if (x && x.status == 200) {
                 if (status.status === 'success') {
                     setTimeout(function() {
-                        
+
                         refreshSubscriptionInfo();
-                        
+
                         ConfigFileManager.refreshConfigList();
-                        
+
                         pluginToggleUserAction = false;
-                        
+
                     }, 2000);
                 } else {
                     pluginToggleUserAction = false;
-                    
+
                     if (DOMCache.oclog) {
                         DOMCache.oclog.innerHTML = '<b style="color:var(--error-color)"><%:Update Failed%></b>';
                     }
-                    
+
                     alert('<%:Failed to update config file:%> ' + (status.message || status.error || '<%:Unknown error%>'));
                 }
             } else {
                 pluginToggleUserAction = false;
-                
+
                 if (DOMCache.oclog) {
                     DOMCache.oclog.innerHTML = '<b style="color:var(--error-color)"><%:Update Failed%></b>';
                 }
-                
+
                 alert('<%:Failed to update config file, please try again later%>');
             }
         });
@@ -4875,36 +5749,36 @@
         }
 
         pluginToggleUserAction = true;
-        
+
         var toggleElement = document.getElementById('plugin_toggle');
         if (toggleElement) {
             toggleElement.disabled = true;
         }
-        
+
         LogManager.startLogDisplay('<%:Restarting...%>');
-        
+
         var requestParams = { action: 'restart' };
-        
+
         var currentConfigValue = ConfigFileManager.getCurrentConfig();
         var selectedConfig = ConfigFileManager.getSelectedConfig();
-        
+
         if (!currentConfigValue && selectedConfig) {
             requestParams.config_file = configFileName;
         }
-        
+
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "action")%>', requestParams, function(x, status) {
             if (x && x.status == 200) {
                 setTimeout(function() {
                     pluginToggleUserAction = false;
                     updatePluginToggleState(StateManager.current_status.clash || false);
-                }, 5000);
+                }, 2000);
                 ConfigFileManager.refreshConfigList();
             } else {
                 if (toggleElement) {
                     toggleElement.disabled = false;
                 }
                 alert('<%:Failed to restart core%>');
-                
+
                 pluginToggleUserAction = false;
             }
         });
@@ -4917,47 +5791,31 @@
             alert('<%:Please select a config file first%>');
             return false;
         }
-        
+
         SubscriptionManager.currentConfigFile = currentConfig;
         SubscriptionManager.retryCount = 0;
-        
+
         var filename = SubscriptionManager.extractFilename(currentConfig);
         localStorage.removeItem('sub_info_' + filename);
         SubscriptionManager.getSubscriptionInfo();
+        OverwriteSubscribeManager.load(true);
         return false;
     }
-    
+
     function setSubscriptionUrl() {
         var currentConfig = ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
             alert('<%:Please select a config file first%>');
             return false;
         }
-        
+
         var filename = SubscriptionManager.extractFilename(currentConfig);
         if (!filename) {
             alert('<%:Invalid config file selected%>');
             return false;
         }
-        
-        var newUrl = prompt('<%:Paste the new url of subscribe infos sources here:%>', '');
-        if (newUrl === null) {
-            return false;
-        }
-        
-        XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "set_subinfo_url")%>', {
-            filename: filename,
-            url: newUrl
-        }, function(x, status) {
-            if (x && x.status == 200 && status.info === "Success") {
-                refreshSubscriptionInfo();
-            } else if (x && x.status == 200 && status.info === "Delete success") {
-                refreshSubscriptionInfo();
-            } else {
-                alert('<%:Specify subscribe infos sources url failed:%>\n' + (status.info || '<%:Unknown error%>'));
-            }
-        });
-        
+
+        SubscriptionUrlSetter.show(filename);
         return false;
     }
 
@@ -4969,11 +5827,47 @@
                 if (typeof ConfigUploader !== 'undefined' && ConfigUploader.show) {
                     ConfigUploader.show();
                 } else {
-                    alert('<%:Config uploader not ready, please try again%>');
+                    alert('<%:Config editor not ready, please try again%>');
                 }
             }, 500);
         }
-        
+
+        return false;
+    }
+
+    function editSubscribe() {
+        var currentConfig = ConfigFileManager.getSelectedConfig();
+        if (!currentConfig) {
+            alert('<%:Please select a config file first%>');
+            return false;
+        }
+
+        var filename = SubscriptionManager.extractFilename(currentConfig);
+        if (!filename) {
+            alert('<%:Invalid config file selected%>');
+            return false;
+        }
+
+        XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "get_subscribe_data")%>', {
+            filename: filename
+        }, function(x, status) {
+            if (x.status == 200) {
+                if (ConfigUploader && ConfigUploader.showEditSubscribe) {
+                    ConfigUploader.showEditSubscribe(status, filename);
+                } else {
+                    setTimeout(function() {
+                        if (ConfigUploader && ConfigUploader.showEditSubscribe) {
+                            ConfigUploader.showEditSubscribe(status, filename);
+                        } else {
+                            alert('<%:Config editor not ready, please try again%>');
+                        }
+                    }, 500);
+                }
+            } else {
+                alert('<%:Failed to get subscribe data%>');
+            }
+        });
+
         return false;
     }
 
@@ -4983,35 +5877,35 @@
             alert('<%:Please select a config file first%>');
             return false;
         }
-        
-        if (typeof ConfigEditor !== 'undefined' && ConfigEditor.show) {
+
+        if (ConfigEditor.show) {
             ConfigEditor.show(currentConfig);
         } else {
             setTimeout(function() {
-                if (typeof ConfigEditor !== 'undefined' && ConfigEditor.show) {
+                if (ConfigEditor.show) {
                     ConfigEditor.show(currentConfig);
                 } else {
                     alert('<%:Config editor not ready, please try again%>');
                 }
             }, 500);
         }
-        
+
         return false;
     }
 
     function editOverwrite() {
-        if (typeof ConfigEditor !== 'undefined' && ConfigEditor.showOverwrite) {
+        if (ConfigEditor.showOverwrite) {
             ConfigEditor.showOverwrite();
         } else {
             setTimeout(function() {
-                if (typeof ConfigEditor !== 'undefined' && ConfigEditor.showOverwrite) {
+                if (ConfigEditor.showOverwrite) {
                     ConfigEditor.showOverwrite();
                 } else {
                     alert('<%:Config editor not ready, please try again%>');
                 }
             }, 500);
         }
-        
+
         return false;
     }
 
@@ -5048,7 +5942,7 @@
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             return true;
         }
-        
+
         var style = window.getComputedStyle(element);
         var bgColor = style.backgroundColor;
         let r, g, b;
@@ -5074,9 +5968,13 @@
         return luminance < 128;
     };
 
-    function toggleTheme() {
-        var currentTheme = localStorage.getItem('oc-theme') || (isDarkBackground(document.body) ? 'dark' : 'light');
-        var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    function toggleThemeMode() {
+        var themes = ['light', 'dark', 'auto'];
+        var currentTheme = localStorage.getItem('oc-theme') || 'auto';
+        var currentIndex = themes.indexOf(currentTheme);
+        if (currentIndex === -1) currentIndex = 2;
+        var newIndex = (currentIndex + 1) % themes.length;
+        var newTheme = themes[newIndex];
         localStorage.setItem('oc-theme', newTheme);
         DarkModeDetector.init();
     }
